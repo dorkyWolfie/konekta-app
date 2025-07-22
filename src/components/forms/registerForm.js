@@ -30,8 +30,8 @@ export default function RegisterForm() {
       if (res.ok) {
         toast.success('Профилот е успешно креиран! Ве молиме најавете се.');
         setTimeout(() => {
-          router.push("/login");
-        }, 3000);
+          router.push("/");
+        }, 1500);
       } else {
         toast.error(data.error || 'Профилот не е креиран. Ве молиме обидете се повторно.');
       }
@@ -44,36 +44,27 @@ export default function RegisterForm() {
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium mb-2">
-            Име
-          </label>
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="input-div">
+          <label htmlFor="name">Име</label>
           <input
             id="name" name="name" type="text"
-            required disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            required disabled={isLoading} placeholder="Име"
           />
         </div>
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-2">
-            Е-пошта
-          </label>
+        <div className="input-div">
+          <label htmlFor="email">Е-пошта</label>
           <input
             id="email" name="email" type="email"
-            required disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            required disabled={isLoading} placeholder="Е-пошта"
           />
         </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-2">
-            Лозинка
-          </label>
+        <div className="input-div mb-4">
+          <label htmlFor="password">Лозинка</label>
           <input
             id="password" name="password" type="password"
-            required disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            required disabled={isLoading} placeholder="Лозинка"
           />
         </div>
         <LoadingButton type="submit" isLoading={isLoading} loadingText="Се креира профилот...">

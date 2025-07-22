@@ -9,19 +9,37 @@ export function middleware(request) {
   // Rate limit specific endpoints
   const rateLimits = [
     {
-      paths: ['/api/auth/callback/credentials'],
+      paths: ['/api/register'],
+      limit: 5,
+      window: 15 * 60 * 1000, // 15 minutes
+      message: 'Too many login attempts. Try again in 15 minutes.'
+    },
+    {
+      paths: ['/lib/auth/credentials'],
       limit: 5,
       window: 15 * 60 * 1000, // 15 minutes
       message: 'Too many login attempts. Try again in 15 minutes.'
     },
     {
       paths: ['/api/upload'],
-      limit: 10,
+      limit: 5,
       window: 60 * 1000, // 1 minute
       message: 'Too many uploads. Try again in a minute.'
     },
     {
-      paths: ['/api/pageActions'],
+      paths: ['/actions/pageActions'],
+      limit: 30,
+      window: 60 * 1000, // 1 minute
+      message: 'Too many save attempts. Slow down!'
+    },
+    {
+      paths: ['/actions/linkActions'],
+      limit: 30,
+      window: 60 * 1000, // 1 minute
+      message: 'Too many save attempts. Slow down!'
+    },
+    {
+      paths: ['/actions/buttonActions'],
       limit: 30,
       window: 60 * 1000, // 1 minute
       message: 'Too many save attempts. Slow down!'
@@ -70,7 +88,7 @@ export function middleware(request) {
 
 export const config = {
   matcher: [
-    '/api/auth/callback/credentials',
+    '/api/register',
     '/api/upload/:path*',
     '/api/pageActions/:path*'
   ]

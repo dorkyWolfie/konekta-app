@@ -12,15 +12,9 @@ export default function LogoutButton({
         <button 
         onClick={() => signOut()}
         className={className}>
-            {iconLeft && (
-                <FontAwesomeIcon 
-                    icon={faArrowRightFromBracket} className={iconClasses} />
-            )}
+            {iconLeft && ( <FontAwesomeIcon icon={faArrowRightFromBracket} className={iconClasses} /> )}
             <span>Одјава</span>
-            {!iconLeft && (
-                <FontAwesomeIcon 
-                icon={faArrowRightFromBracket} className={iconClasses} />
-            )}
+            {!iconLeft && ( <FontAwesomeIcon icon={faArrowRightFromBracket} className={iconClasses} /> )}
         </button>
     );
 }

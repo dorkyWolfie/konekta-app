@@ -13,6 +13,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBrush, faCloudArrowUp, faArrowRight, faSave } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 
+function getSafeImageSrc(src) {
+  if (typeof src !== "string") return "/konekta_logo_4.png";
+
+  // Allow only if it's a valid URL or starts with /
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+    return src;
+  }
+
+  return "/konekta_logo_4.png";
+}
+
 export default function PageSettingsForm({page, user}) {
   const router = useRouter();
   const [bgType, setBgType] = useState(page.bgType);
@@ -25,6 +36,9 @@ export default function PageSettingsForm({page, user}) {
     if (result) {
       toast.success('Зачувано!');
       router.refresh();
+    }
+    else {
+      toast.error('Грешка при зачувување!');
     }
   }
 
@@ -90,7 +104,7 @@ export default function PageSettingsForm({page, user}) {
             <div className="relative -top-8">
               <Image 
                 className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover"
-                src={avatar || '/konekta_logo_4.png'} alt={'avatar'} width={128} height={128} />
+                src={getSafeImageSrc(avatar)} alt={'avatar'} width={128} height={128} />
               <label 
                 htmlFor="avatarIn" 
                 className="cursor-pointer absolute -bottom-0 -right-2 bg-white p-2 rounded-full shadow shadow-black/50 aspect-square flex items-center justify-center hover:text-[#3b82f6]">

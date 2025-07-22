@@ -179,16 +179,13 @@ export default function PageButtonsForm({ page, user }) {
             <FontAwesomeIcon icon={faPlus} />
             <span>Внеси ново копче</span>
           </button>
-
           {showAddMenu && availableButtonTypes.length > 0 && (
             <div className="mt-2 p-4 bg-[#f3f4f6]">
               <p className="text-sm text-[#4b5563] mb-2">Избери тип на копче:</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                 {availableButtonTypes.map(type => (
                   <button
-                    key={type}
-                    type="button"
-                    onClick={() => addNewButton(type)}
+                    key={type} type="button" onClick={() => addNewButton(type)}
                     className="flex items-center gap-2 p-2 text-sm border-b border-[#d1d5db] hover:bg-white hover:text-[#3b82f6] transition-colors">
                     <FontAwesomeIcon icon={BUTTON_TYPES[type].icon} />
                     <span>{BUTTON_TYPES[type].label}</span>
@@ -197,7 +194,6 @@ export default function PageButtonsForm({ page, user }) {
               </div>
             </div>
           )}
-
           {availableButtonTypes.length === 0 && showAddMenu && (
             <div className="mt-2 p-4 bg-[#f8fafc] border text-center text-[#64748b]">
               Сите достапни копчиња се додадени!
@@ -207,61 +203,44 @@ export default function PageButtonsForm({ page, user }) {
         <div className="w-full">
           <ReactSortable handle=".handle" list={buttons} setList={setButtons}>
             {buttons.map(button => (
-              <div key={button.key} className={`mt-4 flex flex-row justify-center sm:justify-start gap-6 flex-wrap md:flex-nowrap items-center ${button.isActive ? 'bg-white' : 'bg-[#f1f5f9] opacity-75'}`}>
-                {/* <div > */}
+              <div key={button.key} className={`w-full flex gap-2 items-center justify-center ${button.isActive ? 'bg-white' : 'bg-[#f1f5f9] opacity-75'}`}>
+                <div className="w-full grow mt-8 flex flex-col gap-4 items-center md:flex-row justify-center">
                   <div className="flex gap-2 items-center">
-                    <div className="handle py-2 cursor-grab">
-                    <FontAwesomeIcon icon={faGripLines} className="text-[#6b7280] hover:text-[#60a5fa]" />
-                  </div>
+                    <div className="handle py-2 cursor-grab"><FontAwesomeIcon icon={faGripLines} className="text-[#6b7280] hover:text-[#60a5fa]" /></div>
                     {/* left side icon and delete */}
-                  <div className="flex flex-col items-center gap-2 min-w-[80px]">
-                    <div className="w-12 h-12 flex items-center justify-center">
-                      {button.icon ? (
-                        <Image 
-                          src={button.icon} 
-                          alt={'icon'} 
-                          className="w-full h-full object-cover"
-                          width={48} 
-                          height={48} 
+                    <div className="flex flex-col items-center gap-2 min-w-[80px]">
+                      <div className="w-12 h-12 flex items-center justify-center">
+                        {button.icon ? (
+                          <Image src={button.icon} alt={'icon'} className="w-full h-full object-cover" width={48} height={48} />
+                        ) : (
+                          <FontAwesomeIcon icon={button.isCustom ? faUser : (BUTTON_TYPES[button.type]?.icon || faUser)} className="text-[#94a3b8]  " />
+                        )}
+                      </div>
+                      {/* icon and delete */}
+                      <div className="text-center">
+                        <input 
+                          onChange={ev => handleUpload(ev, button.key)} 
+                          id={'icon' + button.key} type="file" className="hidden" accept="image/*"
                         />
-                      ) : (
-                        <FontAwesomeIcon 
-                          icon={button.isCustom ? faUser : (BUTTON_TYPES[button.type]?.icon || faUser)} 
-                          className="text-[#94a3b8]"
-                        />
-                      )}
+                        <label 
+                          htmlFor={'icon' + button.key}
+                          className="text-sm py-2 px-6 flex items-center gap-1 border border-[#e5e7eb] hover:text-[#2563eb] cursor-pointer">
+                          <FontAwesomeIcon icon={faCloudArrowUp} />
+                          <span>Промени икона</span>
+                        </label>
+                        <button 
+                          type="button" onClick={() => removeButton(button.key)}
+                          className="text-sm p-2 px-4 flex items-center gap-1 text-[#ef4444] cursor-pointer hover:text-[#b91c1c]">
+                          <FontAwesomeIcon icon={faTrash} />
+                          <span>Избриши го линкот</span>
+                        </button>
+                      </div>
                     </div>
-                    {/* icon and delete */}
-                    <div className="text-center">
-                      <input 
-                        onChange={ev => handleUpload(ev, button.key)} 
-                        id={'icon' + button.key} 
-                        type="file" 
-                        className="hidden" 
-                        accept="image/*"
-                      />
-                      <label 
-                        htmlFor={'icon' + button.key}
-                        className="text-sm py-2 px-6 flex items-center gap-1 border border-[#e5e7eb] hover:text-[#2563eb] cursor-pointer">
-                        <FontAwesomeIcon icon={faCloudArrowUp} />
-                        <span>Промени икона</span>
-                      </label>
-                      <button 
-                        type="button" 
-                        onClick={() => removeButton(button.key)}
-                        className="text-sm p-2 px-4 flex items-center gap-1 text-[#ef4444] cursor-pointer hover:text-[#b91c1c]">
-                        <FontAwesomeIcon icon={faTrash} />
-                        <span>Избриши го линкот</span>
-                      </button>
-                    </div>
-                  </div>
                   </div>
                   {/* toggle */}
-                  <div className="flex-1">
+                  <div className="flex-1 grow w-full">
                     <div className="flex items-center gap-2 mb-2">
-                      <FontAwesomeIcon 
-                        icon={button.isCustom ? faUser : (BUTTON_TYPES[button.type]?.icon || faUser)} 
-                        className="text-[#6b7280]"
+                      <FontAwesomeIcon icon={button.isCustom ? faUser : (BUTTON_TYPES[button.type]?.icon || faUser)} className="text-[#6b7280]"
                       />
                       <h3 className="font-semibold text-[#374151]">{button.title}</h3>
                       {/* <label className="flex items-center gap-1 text-sm">
@@ -282,8 +261,7 @@ export default function PageButtonsForm({ page, user }) {
                           <input 
                             value={button.type.replace('custom_', '')} 
                             onChange={ev => handleButtonChange(button.key, 'type', `custom_${ev.target.value.replace(/\s+/g, '_').toLowerCase()}`)} 
-                            type="text" 
-                            placeholder="На пр: portfolio, blog, shop..."
+                            type="text" placeholder="На пр: portfolio, blog, shop..."
                           />
                         </div>
                       )}
@@ -292,9 +270,7 @@ export default function PageButtonsForm({ page, user }) {
                         <input 
                           value={button.title} 
                           onChange={ev => handleButtonChange(button.key, 'title', ev.target.value)} 
-                          type="text" 
-                          placeholder="Наслов на копчето"
-                          
+                          type="text" placeholder="Наслов на копчето"
                         />
                       </div>
                       {/* url input */}
@@ -318,7 +294,7 @@ export default function PageButtonsForm({ page, user }) {
                       </div>
                     </div>
                   </div>
-                {/* </div> */}
+                </div>
               </div>
             ))}
           </ReactSortable>

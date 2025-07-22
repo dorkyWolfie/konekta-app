@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Image from "next/image";
 import Link from "next/link";
 import SaveContact from "@/components/buttons/saveContact";
+import SectionBox from "@/components/layout/sectionBox";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { event } from "@/models/event";
@@ -70,6 +71,17 @@ function buttonLink(type, value) {
   }
 }
 
+function getSafeImageSrc(src) {
+  if (typeof src !== "string") return "/konekta_logo_4.png";
+
+  // Allow only if it's a valid URL or starts with /
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+    return src;
+  }
+
+  return "/konekta_logo_4.png";
+}
+
 // Helper function to get the button type from custom types
 export function getButtonType(buttonType) {
   if (buttonType.startsWith('custom_')) {
@@ -85,14 +97,14 @@ export default async function UserPage({params}) {
   await mongoose.connect(process.env.MONGO_URI);
 
   const Page = await page.findOne({uri});
-  const User = await user.findOne({email: Page.owner});
+  const User = await user.findOne({email: Page?.owner});
   await event.create({uri:uri, page:uri, type:"view"});
 
   if (!Page) {
     return (
       <div className="p-8 text-center text-[#ef4444]">
         <h2>Страната не е пронајдена: <strong>/{uri}</strong></h2>
-        <Link href="/">Врати се на почетна</Link>
+        <Link href="/" className="underline text-[#2563eb] mt-20">Врати се на почетна</Link>
       </div>
     );
   }
@@ -112,6 +124,15 @@ export default async function UserPage({params}) {
     );
   }
 
+  if (!User || User.subscriptionStatus !== 'pro') {
+    return (
+      <SectionBox>
+        <h2>Немате активен профил.</h2>
+        <p>Доколку сакате да го активирате профилот <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
+      </SectionBox>
+    )
+  }
+
   return (
     <main>
       {/* bg color overlay on entire page */}
@@ -127,7 +148,7 @@ export default async function UserPage({params}) {
       </div>
       {/* avatar image */}
       <Image 
-        src={User.image || '/konekta_logo_4.png'} alt={"avatar"} 
+        src={getSafeImageSrc(User.image)} alt={"avatar"} 
         width={150} height={150} 
         className="rounded-full aspect-square -mt-16 mx-auto border-6 bg-white border-white" />
       <div className="max-w-2xl mx-auto px-4 pb-10">
@@ -148,8 +169,7 @@ export default async function UserPage({params}) {
           </h3>
           <p className="max-w-md mx-auto text-center text-[#1f2937] text-md">{Page.bio}</p>
         </div>
-        
-        {/* Render buttons from buttons array */}
+        {/* Buttons section */}
         {activeButtons.length > 0 && (
           <div className="my-4 flex flex-row flex-wrap justify-center items-center gap-4">
             {activeButtons.map(button => (
@@ -178,12 +198,11 @@ export default async function UserPage({params}) {
             ))}
           </div>
         )}
-        
         {/* Links section */}
         <div className="grid md:grid-cols-2 gap-4">
           {Page.links.map(link => (
             <Link 
-              key={link.url} 
+              key={link.title} 
               ping={process.env.URL+'/api/click?url='+btoa(link.url)+'&page='+Page.uri}
               target="_blank" href={link.url} className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
               <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 p-2 flex justify-center items-center">

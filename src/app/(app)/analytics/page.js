@@ -10,8 +10,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser } from "@fortawesome/free-solid-svg-icons";
-import { faDiscord, faFacebook, faGithub, faInstagram, faTelegram, faTiktok, faWhatsapp, faYoutube, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { faLink, faGlobe, faUser } from "@fortawesome/free-solid-svg-icons";
 import { isToday } from "date-fns";
 import { getButtonType } from "@/app/(page)/[uri]/page";
 import { icons } from "@/app/(page)/[uri]/page";
@@ -25,7 +24,7 @@ export default async function AnalyticsPage() {
   }
 
   const User = await user.findOne({ email: session.user.email }).lean();
-  const Page = await page.findOne({owner: session?.user?.email});
+  const Page = await page.findOne({ owner: session?.user?.email });
   
   const groupedViews = await event.aggregate([
     {
@@ -64,7 +63,7 @@ export default async function AnalyticsPage() {
     return (
       <SectionBox>
         <h2>Аналитика не е достапна на овој план</h2>
-        <p>Доколку сакате да го надградите профилот <Link href="/#cenovnik" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
+        <p>Доколку сакате да го надградите профилот <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
       </SectionBox>
     )
   }

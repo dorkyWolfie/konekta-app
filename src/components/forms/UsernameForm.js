@@ -21,8 +21,9 @@ export default function UsernameForm({desiredUsername}) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h1 className="text-4xl font-bold text-center mb-2">Потврди го твоето корисничко име!</h1>
-      <p className="text-center mb-6 text-[#6b7280]">Одбери корисничко име.</p>
+      <h1 className="text-4xl font-bold text-center mb-2">Одбери корисничко име!</h1>
+      {/* <h1 className="text-4xl font-bold text-center mb-2">Потврди го твоето корисничко име!</h1> */}
+      {/* <p className="text-center mb-6 text-[#6b7280]">Одбери корисничко име.</p> */}
       <div className="max-w-xs mx-auto">
         <input 
           name="username"

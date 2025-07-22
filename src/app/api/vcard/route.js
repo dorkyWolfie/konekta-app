@@ -106,7 +106,7 @@ export async function GET(req) {
     positionLatin ? `TITLE:${positionLatin}` : '',
     phoneValue ? `TEL;TYPE=CELL:${phoneValue}` : '',
     emailValue ? `EMAIL:${emailValue}` : '',
-    `URL:https://konekta.mk/${uri}`,
+    `URL:${process.env.NEXTAUTH_URL}/${uri}`,
   ];
 
   // Add photo
@@ -127,7 +127,7 @@ export async function GET(req) {
     status: 200,
     headers: {
       'Content-Type': 'text/vcard; charset=utf-8',
-      'Content-Disposition': `attachment; filename="${uri}.vcf"`,
+      'Content-Disposition': `attachment; filename="${displayNameLatin}.vcf"`,
     },
   });
 }

@@ -50,7 +50,7 @@ export async function POST(req) {
     }
 
     await resend.emails.send({
-      from: 'Konekta <noreply@konekta.mk>',
+      from: `Konekta <${process.env.SENDER_EMAIL}>`,
       to: process.env.RECEIVER_EMAIL,
       subject,
       html,

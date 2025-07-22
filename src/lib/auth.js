@@ -88,7 +88,7 @@ export const authOptions = {
         return true;
       } catch (error) {
         console.error("Error in signIn callback:", error);
-        return true; // Still allow sign in even if DB update fails
+        return false; // Still allow sign in even if DB update fails
       }
     },
     async jwt({ token, user, account }) {

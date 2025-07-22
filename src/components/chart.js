@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
 import { parseISO, format, subDays, addDays, differenceInDays } from "date-fns";
-import { CartesianGrid, LineChart, Tooltip, XAxis, YAxis, Line, ResponsiveContainer, Area, AreaChart } from "recharts";
+import { CartesianGrid, Tooltip, XAxis, YAxis, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 

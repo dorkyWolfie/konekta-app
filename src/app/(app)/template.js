@@ -17,10 +17,10 @@ export const metadata = {
   title: "Конекта",
   description: "Твојата дигитална прва импресија",
   robots: {
-        index: false,
-        follow: false,
-        nocache: true,
-      },
+    index: false,
+    follow: false,
+    nocache: true,
+  },
 };
 
 export default async function AppTemplate({ children, ...rest }) {
@@ -33,6 +33,17 @@ export default async function AppTemplate({ children, ...rest }) {
   mongoose.connect(process.env.MONGO_URI);
   const Page = await page.findOne({owner: session.user.email});
 
+  function getSafeImageSrc(src) {
+  if (typeof src !== "string") return "/konekta_logo_4.png";
+
+  // Allow only if it's a valid URL or starts with /
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+    return src;
+  }
+
+  return "/konekta_logo_4.png";
+}
+
   return (
     <div className="overflow-x-hidden">
       <Toaster />
@@ -40,7 +51,7 @@ export default async function AppTemplate({ children, ...rest }) {
         <aside id="sidebar" className="bg-white w-60 top-0 left-0 bottom-0 md:block justify-center hidden z-20 transition-all">
           <div className="fixed top-0 left-0 p-4 pt-8 flex flex-col items-center justify-center w-60">
             <div className="rounded-full overflow-hidden aspect-square w-24 m-auto">
-              <Image src={session.user.image || '/konekta_logo_4.png'} width={256} height={256} alt={"avatar"} className="w-full h-full object-cover" />
+              <Image src={getSafeImageSrc(session.user.image)} width={256} height={256} alt={"avatar"} className="w-full h-full object-cover" />
             </div>
             {Page && (
               <Link 

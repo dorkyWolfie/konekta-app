@@ -3,7 +3,7 @@ import Image from "next/image";
 import SectionBox from "../layout/sectionBox";
 import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowUp, faGripLines, faLink, faPlus, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCloudArrowUp, faComment, faGripLines, faLink, faPlus, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { upload } from "@/libs/upload";
@@ -27,8 +27,6 @@ export default function PageLinksForm({page,user}) {
       }
     } catch (error) {
       toast.error('Грешка при зачувување!');
-    } finally {
-      router.refresh();
     }
   }
 
@@ -90,7 +88,7 @@ function removeLink(linkKeyToRemove) {
         <div>
           <ReactSortable handle=".handle" list={links} setList={setLinks}>
             {links.map(l => (
-              <div key={l.title} className="mt-8 flex flex-row justify-center sm:justify-start gap-6 flex-wrap md:flex-nowrap items-center">
+              <div key={l.title} className="mt-8 flex gap-4 items-center sm:flex-nowrap flex-wrap justify-center">
                 <div className="mt-8 flex gap-2 items-center">
                   <div className="handle py-2 cursor-grab">
                     <FontAwesomeIcon icon={faGripLines} className="text-[#6b7280] hover:text-[#60a5fa]" />
@@ -98,10 +96,7 @@ function removeLink(linkKeyToRemove) {
                   <div className="text-center flex flex-col items-center gap-2 text-sm">
                     <div className="aspect-square max-w-[50px]">
                       {l.icon && (
-                        <Image
-                          src={l.icon} alt={'icon'} 
-                          className="w-full h-full object-cover"
-                          width={50} height={50} />
+                        <Image src={l.icon} alt={'icon'} className="w-full h-full object-cover"width={50} height={50} />
                         )}
                       {!l.icon && (<FontAwesomeIcon icon={faLink} />)}
                     </div>
@@ -140,6 +135,12 @@ function removeLink(linkKeyToRemove) {
             ))}
           </ReactSortable>
         </div>
+        {links.length === 0 && (
+                  <div className="text-center py-8 text-[#6b7280]">
+                    <FontAwesomeIcon icon={faComment} size="2x" className="mb-2" />
+                    <p>Немате додадено линкови. Кликнете на "Внеси нов линк" за да започнете.</p>
+                  </div>
+                )}
         <div className="max-w-[200px] mx-auto mt-4 ">
           <SubmitButton>
             <FontAwesomeIcon icon={faSave} />

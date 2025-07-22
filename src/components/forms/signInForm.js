@@ -26,7 +26,7 @@ export default function SignInForm() {
         // Small delay to show success message before redirect
         setTimeout(() => {
           window.location.href = res.url;
-        }, 3000);
+        }, 1500);
       } else if (res?.error) {
  
         toast.error('Погрешна е-пошта или лозинка.');
@@ -40,22 +40,20 @@ export default function SignInForm() {
   }
 
   return (
-    <div className="max-w-md mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-2">Е-пошта</label>
+    <div className="w-full mx-auto">
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="input-div">
+          <label htmlFor="email">Е-пошта</label>
           <input
             id="email" name="email" type="email"
-            required disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            required disabled={isLoading} placeholder="Е-пошта"
           />
         </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-2">Лозинка</label>
+        <div className="input-div">
+          <label htmlFor="password">Лозинка</label>
           <input
             id="password" name="password" type="password" 
-            required disabled={isLoading}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+            required disabled={isLoading} placeholder="Лозинка"
           />
         </div>
         <LoadingButton type="submit" isLoading={isLoading} loadingText="Ве најавува..." >Најави се</LoadingButton>

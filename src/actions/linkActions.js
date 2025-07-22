@@ -26,13 +26,14 @@ function validateLinksData(links) {
     const linkErrors = [];
 
     // Check required fields
-    if (!link.title || typeof link.title !== 'string') {
-      linkErrors.push(`Link ${index + 1}: Title is required and must be a string`);
-    } else if (link.title.trim().length === 0) {
-      linkErrors.push(`Link ${index + 1}: Title cannot be empty`);
-    } else if (link.title.trim().length > LINK_SCHEMA.title.maxLength) {
-      linkErrors.push(`Link ${index + 1}: Title exceeds maximum length`);
-    }
+    // if (!link.title || typeof link.title !== 'string') {
+    //   linkErrors.push(`Link ${index + 1}: Title is required and must be a string`);
+    // } else 
+    // if (link.title.trim().length === 0) {
+    //   linkErrors.push(`Link ${index + 1}: Title cannot be empty`);
+    // } else if (link.title.trim().length > LINK_SCHEMA.title.maxLength) {
+    //   linkErrors.push(`Link ${index + 1}: Title exceeds maximum length`);
+    // }
 
     if (!link.url || typeof link.url !== 'string') {
       linkErrors.push(`Link ${index + 1}: URL is required and must be a string`);

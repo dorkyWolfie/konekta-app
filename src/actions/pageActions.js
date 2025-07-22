@@ -29,9 +29,8 @@ function validateInput(key, value) {
     try {
       const url = new URL(value);
       // Only allow your S3 bucket
-      if (!url.hostname.includes(process.env.BUCKET_NAME)) {
-        return false;
-      }
+      if (!url.hostname.includes(process.env.BUCKET_NAME) && !url.hostname.includes("googleusercontent.com")) 
+      { return false; }
     } catch {
       return false;
     }
@@ -98,36 +97,3 @@ export async function savePageSettings(formData) {
     return false;
   }
 }
-
-// export async function savePageButtons(formData) {
-//   mongoose.connect(process.env.MONGO_URI);
-//   const session = await getServerSession(authOptions);
-
-//   if (session) {
-//     const buttonsValues = {};
-//     formData.forEach((value, key) => {
-//       buttonsValues[key] = value;
-//     });
-//     const dataToUpdate = {buttons:buttonsValues};
-//     await page.updateOne (
-//       {owner: session?.user?.email},
-//       dataToUpdate,
-//     );
-//     return true;
-//   }
-//   return false;
-// }
-
-// export async function savePageLinks(links) {
-//   mongoose.connect(process.env.MONGO_URI);
-//   const session = await getServerSession(authOptions);
-
-//   if(session) {
-//     await page.updateOne (
-//       {owner: session?.user?.email},
-//       {links:links},
-//     );
-//   } else {
-//     return false;
-//   }
-// }
