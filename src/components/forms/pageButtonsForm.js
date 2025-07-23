@@ -302,7 +302,7 @@ export default function PageButtonsForm({ page, user }) {
         {buttons.length === 0 && (
           <div className="text-center py-8 text-[#6b7280]">
             <FontAwesomeIcon icon={faComment} size="2x" className="mb-2" />
-            <p>Немате додадено копчиња. Кликнете на "Внеси ново копче" за да започнете.</p>
+            <p>Немате додадено копчиња. Кликнете на &quot;Внеси ново копче&quot; за да започнете.</p>
           </div>
         )}
         <div className="max-w-[200px] mx-auto mt-6">

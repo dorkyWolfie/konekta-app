@@ -138,7 +138,7 @@ function removeLink(linkKeyToRemove) {
         {links.length === 0 && (
                   <div className="text-center py-8 text-[#6b7280]">
                     <FontAwesomeIcon icon={faComment} size="2x" className="mb-2" />
-                    <p>Немате додадено линкови. Кликнете на "Внеси нов линк" за да започнете.</p>
+                    <p>Немате додадено линкови. Кликнете на &quot;Внеси нов линк&quot; за да започнете.</p>
                   </div>
                 )}
         <div className="max-w-[200px] mx-auto mt-4 ">
