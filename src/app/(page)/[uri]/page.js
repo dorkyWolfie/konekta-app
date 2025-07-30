@@ -7,7 +7,7 @@ import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { event } from "@/models/event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFile } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faFacebook, faGithub, faInstagram, faTelegram, faTiktok, faWhatsapp, faYoutube, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 
 export const icons = {
@@ -98,6 +98,7 @@ export default async function UserPage({params}) {
 
   const Page = await page.findOne({uri});
   const User = await user.findOne({email: Page?.owner});
+
   await event.create({uri:uri, page:uri, type:"view"});
 
   if (!Page) {
@@ -150,7 +151,7 @@ export default async function UserPage({params}) {
       <Image 
         src={getSafeImageSrc(User.image)} alt={"avatar"} 
         width={150} height={150} 
-        className="rounded-full aspect-square -mt-16 mx-auto border-6 bg-white border-white" />
+        className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
       <div className="max-w-2xl mx-auto px-4 pb-10">
         <div className="flex flex-col items-center mt-4">
           <h2 className="text-2xl font-bold">{Page.displayName}</h2>
@@ -216,6 +217,28 @@ export default async function UserPage({params}) {
               <div>
                 <h3>{link.title}</h3>
                 <p>{link.subtitle}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
+        {/* Files section */}
+        <div className="grid md:grid-cols-2 gap-4 my-4">
+          {Page.files.map(file => (
+            <Link 
+              key={file.title} 
+              ping={process.env.URL+'/api/click?url='+btoa(file.url)+'&page='+Page.uri}
+              target="_blank" href={file.url} className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
+              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 p-2 flex justify-center items-center">
+                {file.url && (
+                  <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover" width={256} height={256} />
+                )}
+                {!file.url && (
+                  <FontAwesomeIcon icon={faFile} />
+                )}
+              </div>
+              <div>
+                <h3>{file.title}</h3>
+                <p>{file.subtitle}</p>
               </div>
             </Link>
           ))}

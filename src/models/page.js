@@ -13,6 +13,7 @@ const PageSchema = new Schema({
     bgImage: {type: String, default: ''},
     buttons: {type: Object, default: []},
     links: {type: Object, default: []},
+    files: {type: Object, default: []},
 }, {timestamps: true});
 
 export const page = models?.page || model("page", PageSchema);

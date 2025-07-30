@@ -11,6 +11,7 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
+import PageFilesForm from "@/components/forms/pageFilesForm";
 
 export default async function AccountPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
@@ -46,6 +47,7 @@ export default async function AccountPage({ searchParams }) {
           <PageSettingsForm page={plainPage} user={session.user} />
           <PageButtonsForm page={plainPage} user={session.user} />
           <PageLinksForm page={plainPage} user={session.user} />
+          <PageFilesForm page={plainPage} user={session.user} />
         </>
       ) : (
         <SectionBox>
