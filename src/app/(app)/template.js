@@ -8,10 +8,10 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { page } from "@/models/page";
-import { openAside } from "@/components/mobMenu";
+import { closeAside, openAside } from "@/components/mobMenu";
 import { Toaster } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare, faBars } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUpRightFromSquare, faBars, faClose } from "@fortawesome/free-solid-svg-icons";
 
 export const metadata = {
   title: "Конекта",
@@ -48,8 +48,11 @@ export default async function AppTemplate({ children, ...rest }) {
     <div className="overflow-x-hidden">
       <Toaster />
       <main className="flex min-h-screen">
-        <aside id="sidebar" className="bg-white w-60 top-0 left-0 bottom-0 md:block justify-center hidden z-20 transition-all">
-          <div className="fixed top-0 left-0 p-4 pt-8 flex flex-col items-center justify-center w-60">
+        <aside id="sidebar" className="bg-white p-6 relative w-55 min-w-55 md:block hidden">
+          <button onClick={closeAside} className="md:hidden block absolute top-8 right-2 bg-[#3b82f6] text-white py-2 px-3 shadow-md">
+            <FontAwesomeIcon icon={faClose} size="lg" />
+          </button>
+          <div className="fixed top-8">
             <div className="rounded-full overflow-hidden aspect-square w-24 m-auto">
               <Image src={getSafeImageSrc(session.user.image)} width={256} height={256} alt={"avatar"} className="w-full h-full object-cover" />
             </div>
@@ -58,7 +61,8 @@ export default async function AppTemplate({ children, ...rest }) {
                 target="_blank"
                 href={'/' + Page.uri} 
                 className="text-center mt-4 flex gap-1 items-center justify-center hover:text-[#3b82f6]">
-                <span>konekta.mk/{Page.uri}</span>
+                <Image src="/konekta_logo_4.png" alt="dekorativna slika" width={30} height={30} className="-mr-1" />
+                <span>/{Page.uri}</span>
                 <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="w-3 h-3" />
               </Link>
             )}

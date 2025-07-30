@@ -4,10 +4,12 @@ import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 // OPEN MOBILE SIDEBAR (ASIDE)
 export function openAside() {
-  const sidebar = document.getElementById("sidebar");
-  if (!sidebar) return;
+  document.getElementById("sidebar").style.display = "flex";
+}
 
-  sidebar.classList.toggle("hidden");
+// CLOSE MOBILE SIDEBAR (ASIDE)
+export function closeAside() {
+  document.getElementById("sidebar").style.display = "none";
 }
 
 // OPEN MOBILE HEADER

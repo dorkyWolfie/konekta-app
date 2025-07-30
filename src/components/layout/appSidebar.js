@@ -32,11 +32,8 @@ export default function AppSidebar() {
         className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]"}
         iconClasses={'w-6 h-6'}
       />
-      <div className="absolute top-88 left-4 w-52 h-0.5 bg-[#e5e7eb] mt-6"></div>
-      <Link href={'/'} className="flex items-center gap-2 text-xs uppercase text-[#4b5563] pt-7 cursor-pointer hover:text-[#3b82f6]">
-        <FontAwesomeIcon 
-          icon={faArrowLeft}
-          className={"w-3 h-3"} />
+      <Link href={'/'} className="flex items-center gap-2 text-xs uppercase text-[#4b5563] pt-6 cursor-pointer hover:text-[#3b82f6] border-t-2 border-[#e5e7eb]">
+        <FontAwesomeIcon icon={faArrowLeft} className={"w-3 h-3"} />
         <span>Назад кон почетна</span>
       </Link>
       <Link href={'https://konekta.mk'} className="flex items-center gap-2 text-xs uppercase text-[#4b5563] cursor-pointer hover:text-[#3b82f6]">
