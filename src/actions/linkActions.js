@@ -5,10 +5,11 @@ import { authOptions } from '@/lib/auth';
 import { page } from '@/models/page';
 
 const LINK_SCHEMA = {
+  key: { type: 'string', required: true },
   title: { type: 'string', maxLength: 100, required: true },
   subtitle: { type: 'string', maxLength: 200, required: false },
   url: { type: 'string', maxLength: 500, required: true },
-  // icon: { type: 'string', maxLength: 50, required: false }
+  icon: { type: 'string', required: false }
 };
 
 function validateLinksData(links) {
@@ -25,15 +26,15 @@ function validateLinksData(links) {
   const validatedLinks = links.map((link, index) => {
     const linkErrors = [];
 
-    // Check required fields
-    // if (!link.title || typeof link.title !== 'string') {
-    //   linkErrors.push(`Link ${index + 1}: Title is required and must be a string`);
-    // } else 
-    // if (link.title.trim().length === 0) {
-    //   linkErrors.push(`Link ${index + 1}: Title cannot be empty`);
-    // } else if (link.title.trim().length > LINK_SCHEMA.title.maxLength) {
-    //   linkErrors.push(`Link ${index + 1}: Title exceeds maximum length`);
-    // }
+    // Check required fields 
+    if (!link.title || typeof link.title !== 'string') {
+      linkErrors.push(`Link ${index + 1}: Title is required and must be a string`);
+    } else 
+    if (link.title.trim().length === 0) {
+      linkErrors.push(`Link ${index + 1}: Title cannot be empty`);
+    } else if (link.title.trim().length > LINK_SCHEMA.title.maxLength) {
+      linkErrors.push(`Link ${index + 1}: Title exceeds maximum length`);
+    }
 
     if (!link.url || typeof link.url !== 'string') {
       linkErrors.push(`Link ${index + 1}: URL is required and must be a string`);
@@ -57,6 +58,7 @@ function validateLinksData(links) {
     errors.push(...linkErrors);
 
     return {
+      key: link.key?.trim() || '',
       title: link.title?.trim() || '',
       subtitle: link.subtitle?.trim() || '',
       url: link.url?.trim() || '',

@@ -31,15 +31,16 @@ export default function PageLinksForm({page,user}) {
   }
 
   function addNewLink() {
-    setLinks(prev => {
-      return [...prev, {
+    setLinks(prev => [
+      ...prev, 
+      {
         key: Date.now().toString(),
-        title: '', 
-        subtitle: '', 
-        icon: '', 
+        title: '',
+        subtitle: '',
+        icon: '',
         url: ''
-      }];
-    });
+      }
+    ]);
   }
 
   function handleUpload(ev, linkKeyForUpload) {
@@ -88,7 +89,7 @@ function removeLink(linkKeyToRemove) {
         <div>
           <ReactSortable handle=".handle" list={links} setList={setLinks}>
             {links.map(l => (
-              <div key={l.title} className="mt-8 flex gap-4 items-center sm:flex-nowrap flex-wrap justify-center">
+              <div key={l.key} className="mt-8 flex gap-4 items-center sm:flex-nowrap flex-wrap justify-center">
                 <div className="mt-8 flex gap-2 items-center">
                   <div className="handle py-2 cursor-grab">
                     <FontAwesomeIcon icon={faGripLines} className="text-[#6b7280] hover:text-[#60a5fa]" />

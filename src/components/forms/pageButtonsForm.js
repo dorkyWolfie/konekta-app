@@ -232,7 +232,7 @@ export default function PageButtonsForm({ page, user }) {
                           type="button" onClick={() => removeButton(button.key)}
                           className="text-sm p-2 px-4 flex items-center gap-1 text-[#ef4444] cursor-pointer hover:text-[#b91c1c]">
                           <FontAwesomeIcon icon={faTrash} />
-                          <span>Избриши го линкот</span>
+                          <span>Избриши го копчето</span>
                         </button>
                       </div>
                     </div>
