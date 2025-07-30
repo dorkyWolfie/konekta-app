@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth';
 import uniqid from 'uniqid';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
 
 export async function POST(req) {
   try {
@@ -50,7 +50,8 @@ export async function POST(req) {
       'image/jpeg': ['jpg', 'jpeg'],
       'image/png': ['png'],
       'image/webp': ['webp'],
-      'image/gif': ['gif']
+      'image/gif': ['gif'],
+      'application/pdf': ['pdf'],
     };
 
     if (!typeExtMap[file.type]?.includes(ext.toLowerCase())) {

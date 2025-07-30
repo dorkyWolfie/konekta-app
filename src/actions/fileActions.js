@@ -10,7 +10,7 @@ const FILE_SCHEMA = {
   description: { maxLength: 500, required: false },
   url: { maxLength: 1000, required: true },
   name: { maxLength: 255, required: true },
-  type: { maxLength: 100, required: true },
+  type: { maxLength: 200, required: true },
   size: { max: 10485760, required: true } // 10MB max
 };
 

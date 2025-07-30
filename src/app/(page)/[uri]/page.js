@@ -229,12 +229,12 @@ export default async function UserPage({params}) {
               ping={process.env.URL+'/api/click?url='+btoa(file.url)+'&page='+Page.uri}
               target="_blank" href={file.url} className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
               <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 p-2 flex justify-center items-center">
-                {file.url && (
-                  <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover" width={256} height={256} />
-                )}
-                {!file.url && (
+                {file.url && file.type === 'application/pdf' && (
                   <FontAwesomeIcon icon={faFile} />
-                )}
+                ) || (
+                  <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover" width={256} height={256} />
+                )
+                }
               </div>
               <div>
                 <h3>{file.title}</h3>
