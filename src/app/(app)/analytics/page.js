@@ -10,10 +10,19 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faGlobe, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faGlobe, faUser, faImage, faFile } from "@fortawesome/free-solid-svg-icons";
 import { isToday } from "date-fns";
 import { getButtonType } from "@/app/(page)/[uri]/page";
 import { icons } from "@/app/(page)/[uri]/page";
+
+function getFileIcon(type) {
+    if (type?.startsWith('image/')) {
+      return faImage;
+    } else if (type === 'application/pdf') {
+      return faFilePdf;
+    }
+    return faFile;
+  }
 
 export default async function AnalyticsPage() {
   mongoose.connect(process.env.MONGO_URI);
@@ -56,8 +65,9 @@ export default async function AnalyticsPage() {
     type: 'click',
   });
 
-  const linkClicks = clicks.filter(c => Page.links?.some(l => l.url === c.uri));
   const buttonClicks = clicks.filter(c => Page.buttons?.some(b => b.value === c.uri));
+  const linkClicks = clicks.filter(c => Page.links?.some(l => l.url === c.uri));
+  const fileClicks = clicks.filter(c => Page.files?.some(f => f.url === c.uri));
 
   if (!User || User.subscriptionStatus !== 'pro') {
     return (
@@ -133,6 +143,38 @@ export default async function AnalyticsPage() {
               <div className="grow">
                 <h3>{link.title || 'Нема наслов'}</h3>
                 <a target="_blank" href={link.url} className="text-[#1d4ed8] text-xs">{link.url}</a>
+              </div>
+              <div className="text-center flex items-center justify-center gap-4">
+                <div className="flex flex-col gap-2">
+                  <span className="text-xl">{today}</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Денес:</span>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span className="text-xl">{total}</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Вкупно:</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </SectionBox>
+      <SectionBox>
+        <h2 className="text-xl mb-6 font-bold text-center">Кликови од Датотеки</h2>
+        {Page.files.map(file => {
+          const today = fileClicks.filter(c => c.uri === file.url && isToday(c.createdAt)).length;
+          const total = fileClicks.filter(c => c.uri === file.url).length;
+          return (
+            <div key={file.key || file.title} className="flex gap-6 items-center justify-center border-t border-[#e5e7eb] py-4">
+              <div className="text-[#3b82f6] pl-4">
+                {file.url && file.type === 'application/pdf' && (
+                  <FontAwesomeIcon icon={faFile} width={24} height={24} />
+                ) || (
+                  <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover object-center -mr-1 aspect-square" width={24} height={24} />
+                )}
+              </div>
+              <div className="grow">
+                <h3>{file.title || 'Нема наслов'}</h3>
+                <a target="_blank" href={file.url} className="text-[#1d4ed8] text-xs">{file.url}</a>
               </div>
               <div className="text-center flex items-center justify-center gap-4">
                 <div className="flex flex-col gap-2">

@@ -148,10 +148,7 @@ export default async function UserPage({params}) {
         }>
       </div>
       {/* avatar image */}
-      <Image 
-        src={getSafeImageSrc(User.image)} alt={"avatar"} 
-        width={150} height={150} 
-        className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
+      <Image src={getSafeImageSrc(User.image)} alt={"avatar"} width={150} height={150} className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
       <div className="max-w-2xl mx-auto px-4 pb-10">
         <div className="flex flex-col items-center mt-4">
           <h2 className="text-2xl font-bold">{Page.displayName}</h2>
@@ -182,18 +179,9 @@ export default async function UserPage({params}) {
                 className="aspect-square rounded-full bg-white/75 shadow-sm p-3 text-center flex items-center justify-center hover:bg-white/90 transition-colors"
                 title={button.title || button.type}>
                 {button.icon ? (
-                  <Image 
-                    src={button.icon} 
-                    alt={button.title || button.type} 
-                    width={24} 
-                    height={24}
-                    className="w-6 h-6 object-contain" 
-                  />
+                  <Image src={button.icon} alt={button.title || button.type} width={24} height={24} className="w-6 h-6 object-contain" />
                 ) : (
-                  <FontAwesomeIcon 
-                    icon={icons[getButtonType(button.type)] || (button.isCustom ? faUser : faGlobe)} 
-                    className="w-6 h-6" 
-                  />
+                  <FontAwesomeIcon icon={icons[getButtonType(button.type)] || (button.isCustom ? faUser : faGlobe)} className="w-6 h-6" />
                 )}
               </Link>
             ))}
@@ -205,7 +193,9 @@ export default async function UserPage({params}) {
             <Link 
               key={link.title} 
               ping={process.env.URL+'/api/click?url='+btoa(link.url)+'&page='+Page.uri}
-              target="_blank" href={link.url} className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
+              target="_blank" 
+              href={link.url} 
+              className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
               <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 p-2 flex justify-center items-center">
                 {link.icon && (
                   <Image src={link.icon} alt={'icon'} width={256} height={256} className="w-20 h-20 object-contain" />
@@ -227,14 +217,15 @@ export default async function UserPage({params}) {
             <Link 
               key={file.title} 
               ping={process.env.URL+'/api/click?url='+btoa(file.url)+'&page='+Page.uri}
-              target="_blank" href={file.url} className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
+              target="_blank" 
+              href={file.url} 
+              className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
               <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 p-2 flex justify-center items-center">
                 {file.url && file.type === 'application/pdf' && (
                   <FontAwesomeIcon icon={faFile} />
                 ) || (
                   <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover" width={256} height={256} />
-                )
-                }
+                )}
               </div>
               <div>
                 <h3>{file.title}</h3>
