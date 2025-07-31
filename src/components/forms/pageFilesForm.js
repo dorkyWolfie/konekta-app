@@ -1,5 +1,6 @@
 'use client';
 import Image from "next/image";
+import Link from "next/link";
 import SectionBox from "../layout/sectionBox";
 import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -95,10 +96,50 @@ export default function PageFilesForm({page, user}) {
     });
   }
 
-  function removeFile(fileKeyToRemove) {
+  // Function to delete file from S3
+  async function deleteFromS3(fileUrl) {
+    try {
+      const response = await fetch('/api/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileUrl }),
+      });
+
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete file from S3');
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Error deleting file from S3:', error);
+      throw error;
+    }
+  }
+
+  async function removeFile(fileKeyToRemove) {
+    const fileToRemove = files.find(f => f.key === fileKeyToRemove);
+    
+    // If file has a URL (uploaded to S3), delete it from S3 first
+    if (fileToRemove?.url) {
+      try {
+        await deleteFromS3(fileToRemove.url);
+        toast.success('Датотеката е успешно избришана од датабазата!');
+      } catch (error) {
+        toast.error('Грешка при бришење од датабазата, но датотеката ќе биде отстранета од листата.');
+        console.error('S3 deletion failed:', error);
+        // Continue with local removal even if S3 deletion fails
+      }
+    }
+
+    // Remove file from local state
     setFiles(prevFiles =>
       [...prevFiles].filter(f => f.key !== fileKeyToRemove)
     );
+    
     toast.success('Датотеката е избришана!');
   }
 
@@ -138,7 +179,7 @@ export default function PageFilesForm({page, user}) {
         <div>
           <ReactSortable handle=".handle" list={files} setList={setFiles}>
             {files.map(f => (
-              <div key={f.key} className="mt-8 flex gap-4 items-center sm:flex-nowrap flex-wrap justify-center">
+              <div key={f.key} className="mt-8 flex gap-4 items-center md:flex-nowrap flex-wrap justify-center">
                 <div className="mt-8 flex gap-2 items-center">
                   <div className="handle py-2 cursor-grab">
                     <FontAwesomeIcon icon={faGripLines} className="text-[#6b7280] hover:text-[#60a5fa]" />
@@ -185,7 +226,7 @@ export default function PageFilesForm({page, user}) {
                     </div>
                     {f.url && (
                       <div className="flex gap-1">
-                        <a 
+                        <Link 
                           href={f.url} 
                           target="_blank" 
                           rel="noopener noreferrer"
@@ -193,15 +234,15 @@ export default function PageFilesForm({page, user}) {
                         >
                           <FontAwesomeIcon icon={faEye} />
                           <span>Преглед</span>
-                        </a>
-                        <a 
+                        </Link>
+                        <Link 
                           href={f.url} 
                           download={f.name}
                           className="p-1 px-2 text-xs flex items-center gap-1 text-[#7c3aed] hover:text-[#5b21b6] cursor-pointer"
                         >
                           <FontAwesomeIcon icon={faDownload} />
                           <span>Преземи</span>
-                        </a>
+                        </Link>
                       </div>
                     )}
                     <button 
