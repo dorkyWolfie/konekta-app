@@ -38,6 +38,9 @@ export default function Layout({ children }) {
         <meta name="robots" content="noindex, nofollow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <meta property="og:title" content="Конекта" />
+        <meta property="og:description" content="Твојата дигитална прва импресија" />
+        <meta property="og:image" content="https://konekta.mk/_next/image?url=%2Fkonekta_logo_0.webp&w=96&q=75" />
       </head>
       <body>
         {children}

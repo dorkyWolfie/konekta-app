@@ -22,6 +22,17 @@ export async function generateMetadata({ params }) {
   return {
     title: `${PageData.displayName} | Конекта`,
     description: PageData.bio || "Твојата дигитална прва импресија",
+    openGraph: {
+      title: `${PageData.displayName} | Конекта`,
+      description: PageData.bio || "Твојата дигитална прва импресија",
+      images: [
+        {
+          url: PageData.avatar || "https://konekta.mk/_next/image?url=%2Fkonekta_logo_0.webp&w=96&q=75",
+          width: 96,
+          height: 96,
+        },
+      ],
+    },
     robots: {
       index: false,
       follow: false,
