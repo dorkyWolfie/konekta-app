@@ -6,7 +6,7 @@ const nextConfig = {
         hostname: '*.googleusercontent.com'
       },
       {
-        hostname: 'konekta-new.s3.amazonaws.com'
+        hostname: `${process.env.BUCKET_NAME}.s3.amazonaws.com`
       }
     ],
   }
