@@ -71,16 +71,16 @@ function buttonLink(type, value) {
   }
 }
 
-function getSafeImageSrc(src) {
-  if (typeof src !== "string") return "/konekta_logo_4.png";
+// function getSafeImageSrc(src) {
+//   if (typeof src !== "string") return "/konekta_logo_4.png";
 
-  // Allow only if it's a valid URL or starts with /
-  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
-    return src;
-  }
+//   // Allow only if it's a valid URL or starts with /
+//   if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+//     return src;
+//   }
 
-  return "/konekta_logo_4.png";
-}
+//   return "/konekta_logo_4.png";
+// }
 
 // Helper function to get the button type from custom types
 export function getButtonType(buttonType) {
@@ -148,7 +148,7 @@ export default async function UserPage({params}) {
         }>
       </div>
       {/* avatar image */}
-      <Image src={getSafeImageSrc(User.image)} alt={"avatar"} width={150} height={150} className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
+      <Image src={User.image} alt={"avatar"} width={150} height={150} className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
       <div className="max-w-2xl mx-auto px-4 pb-10">
         <div className="flex flex-col items-center mt-4">
           <h2 className="text-2xl font-bold">{Page.displayName}</h2>
