@@ -1,5 +1,7 @@
 'use client';
+import LoadingButton from '@/components/buttons/loadingButton';
 import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,12 @@ export default function ContactForm() {
       body: JSON.stringify({ tip: 'kontakt', ...formData }),
     });
     setSuccess(res.ok);
-    if (res.ok) setFormData({ ime: '', prezime: '', email: '', telefon: '', poraka: '' });
+    if (res.ok) {
+      setFormData({ ime: '', prezime: '', email: '', telefon: '', poraka: '' });
+      toast.success('Пораката е успешно испратена!');
+    } else {
+      toast.error('Се појави грешка. Ве молиме обидете се повторно.');
+    }
     setLoading(false);
   };
 
@@ -48,10 +55,7 @@ export default function ContactForm() {
           <textarea name="poraka" value={formData.poraka} onChange={handleChange} required />
         </div>
       </div>
-      <button type="submit" className="button-1" disabled={loading} >
-        {loading ? 'Се испраќа...' : 'Испрати'}
-      </button>
-      {success && <p className="text-green-600">Пораката е успешно испратена!</p>}
+      <LoadingButton type="submit" isLoading={loading} loadingText="Се испраќа..." >Испрати</LoadingButton>
     </form>
   );
 }
