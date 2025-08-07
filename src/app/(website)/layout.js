@@ -1,16 +1,17 @@
 import "../globals.css";
-import { Manrope } from 'next/font/google'
+import { Manrope } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import Footer from "@/components/footer";
-import { Toaster } from 'react-hot-toast';
+
 
 export const metadata = {
   title: "Конекта",
   description: "Твојата дигитална прва импресија",
   robots: {
-      index: false,
-      follow: false,
-      nocache: true,
-    },
+    index: false,
+    follow: false,
+    nocache: true,
+  },
 };
 
 const manrope = Manrope({

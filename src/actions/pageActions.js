@@ -28,7 +28,6 @@ function validateInput(key, value) {
   if ((key === 'bgImage' || key === 'avatar') && value !== 'avatar') {
     try {
       const url = new URL(value);
-      // Only allow your S3 bucket
       if (!url.hostname.includes(process.env.BUCKET_NAME) && !url.hostname.includes("googleusercontent.com")) 
       { return false; }
     } catch {

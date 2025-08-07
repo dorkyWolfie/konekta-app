@@ -19,9 +19,9 @@ export default function Login() {
           <hr className="border-0 h-6" />
           <SignInForm />
         </div>
-        <div className="mt-6">
-          <p className="text-md text-[#4b5563] text-center">Немаш профил?</p>
-          <Link href="/registracija" className="text-md text-[#2563eb] hover:text-[#1e40af] font-[700] text-center">Регистрирај се.</Link>
+        <div className="mt-4 text-center">
+          <p className="text-sm text-[#4b5563] font-[600] pb-1">Немаш профил?</p>
+          <Link href="/registracija" className="text-md text-[#2563eb] hover:text-[#1e40af] font-[700]">Регистрирај се</Link>
         </div>
         <div className="w-full flex flex-row justify-between gap-6 text-xs text-[#2563eb] font-[700] uppercase mt-6">
           <Link href="/account" className="hover:text-[#1e40af]">Кон профил</Link>

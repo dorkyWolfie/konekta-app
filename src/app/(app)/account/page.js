@@ -1,17 +1,17 @@
 'use server';
 import mongoose from "mongoose";
+import SectionBox from "@/components/layout/sectionBox";
 import UsernameForm from "@/components/forms/UsernameForm";
 import PageSettingsForm from "@/components/forms/pageSettingsForm";
 import PageButtonsForm from "@/components/forms/pageButtonsForm";
 import PageLinksForm from "@/components/forms/pageLinksForm";
-import SectionBox from "@/components/layout/sectionBox";
+import PageFilesForm from "@/components/forms/pageFilesForm";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
-import PageFilesForm from "@/components/forms/pageFilesForm";
 
 export default async function AccountPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;

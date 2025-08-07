@@ -21,9 +21,6 @@ export async function DELETE(request) {
       );
     }
 
-    // Extract the S3 key from the URL
-    // Example: https://your-bucket.s3.region.amazonaws.com/path/to/file.jpg
-    // or https://s3.region.amazonaws.com/your-bucket/path/to/file.jpg
     const url = new URL(fileUrl);
     let key;
     

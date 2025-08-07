@@ -205,11 +205,11 @@ label.input-label {
 
 .input-div input,
 .input-div textarea {
-  @apply border-b-2 border-[#d1d5db] p-1;
+  @apply border-b-2 border-[#d1d5db] p-1 text-sm;
 }
 
 .input-div label {
-  @apply text-sm font-bold text-[#4b5563];
+  @apply text-xs font-bold text-[#4b5563];
 }
 
 .input-div input:hover,
@@ -224,15 +224,3 @@ textarea {
   @apply outline-none;
 }
 /* ---- CONTACT FORM END ---- */
-
-/* ---- WAVE BG START ---- */
-.custom-shape-divider-top {
-  @apply absolute -top-1 left-0 right-0 w-full fill-[#F0F9FF] overflow-x-hidden;
-}
-
-.custom-shape-divider-top svg {
-  display: block;
-  width: calc(117% + 1.3px);
-  height: 130px;
-}
-/* ---- WAVE BG END ---- */

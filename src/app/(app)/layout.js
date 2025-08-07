@@ -21,7 +21,7 @@ export async function generateMetadata() {
   const User = await user.findOne({ email: session.user.email });
 
   return {
-    // title: `${User.name} | Конекта`,
+    title: `${User.name} | Конекта`,
     description: "Лични информации и поставки",
     robots: {
       index: false,
