@@ -14,14 +14,15 @@ import { faBrush, faCloudArrowUp, faArrowRight, faSave } from "@fortawesome/free
 import { faImage } from "@fortawesome/free-regular-svg-icons";
 
 function getSafeImageSrc(src) {
-  if (typeof src !== "string") return "/konekta_logo_4.png";
+  if (typeof src !== "string") 
+    return "/user-astronaut-solid-full.webp";
 
   // Allow only if it's a valid URL or starts with /
   if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
     return src;
   }
 
-  return "/konekta_logo_4.png";
+  return "/user-astronaut-solid-full.webp";
 }
 
 export default function PageSettingsForm({page, user}) {
@@ -103,7 +104,7 @@ export default function PageSettingsForm({page, user}) {
           <div className="flex justify-center -mb-10">
             <div className="relative -top-8">
               <Image 
-                className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover"
+                className="rounded-full bg-white border-4 border-white shadow shadow-black/50 aspect-square object-cover"
                 src={getSafeImageSrc(avatar)} alt={'avatar'} width={128} height={128} />
               <label 
                 htmlFor="avatarIn" 
@@ -118,25 +119,15 @@ export default function PageSettingsForm({page, user}) {
           </div>
           <div>
             <label className="input-label" htmlFor="nameIn">Име и презиме</label>
-            <input 
-              type="text" id="nameIn" name="displayName"
-              defaultValue={page.displayName} placeholder="Име и презиме" />
+            <input type="text" id="nameIn" name="displayName" defaultValue={page.displayName} placeholder="Име и презиме" />
             <label className="input-label" htmlFor="companyIn">Име на фирма</label>
-            <input 
-              type="text" id="companyIn" name="company"
-              defaultValue={page.company} placeholder="Каде работиш?" />
+            <input type="text" id="companyIn" name="company" defaultValue={page.company} placeholder="Каде работиш?" />
             <label className="input-label" htmlFor="positionIn">Позиција</label>
-            <input 
-              type="text" id="positionIn" name="position"
-              defaultValue={page.position} placeholder="На која позиција работиш? пр. Сметководител, финансии..." />
+            <input type="text" id="positionIn" name="position" defaultValue={page.position} placeholder="На која позиција работиш? пр. Програмер, сметководител, финансии..." />
             <label className="input-label" htmlFor="locationIn">Локација</label>
-            <input 
-              type="text" id="locationIn" name="location"
-              defaultValue={page.location} placeholder="Од каде си? / Каде живееш?" />
+            <input type="text" id="locationIn" name="location" defaultValue={page.location} placeholder="Од каде си? / Каде живееш?" />
             <label className="input-label" htmlFor="bioIn">Кратка биографија</label>
-            <textarea 
-              name="bio" id="bioIn"
-              defaultValue={page.bio} placeholder="Накратко опиши се себеси." />
+            <textarea name="bio" id="bioIn" defaultValue={page.bio} placeholder="Накратко опиши се себеси." />
             <div className="max-w-[200px] mx-auto mt-4">
               <SubmitButton> 
                 <FontAwesomeIcon icon={faSave} />

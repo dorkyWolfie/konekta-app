@@ -200,7 +200,7 @@ export default function PageFilesForm({page, user}) {
                           className="text-[#6b7280] text-2xl" 
                         />
                       ) : (
-                        <FontAwesomeIcon icon={faFile} className="text-[#d1d5db] text-2xl" />
+                        <FontAwesomeIcon icon={faFilePdf} className="text-[#d1d5db] text-2xl" />
                       )}
                     </div>
                     {f.size > 0 && (

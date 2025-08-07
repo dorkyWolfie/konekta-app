@@ -1,6 +1,6 @@
 import SectionBox from "@/components/layout/sectionBox";
-import mongoose from "mongoose";
 import Chart from "@/components/chart";
+import mongoose from "mongoose";
 import Link from "next/link";
 import Image from "next/image";
 import { event } from "@/models/event";
@@ -10,19 +10,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faGlobe, faUser, faImage, faFile } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faGlobe, faUser, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { isToday } from "date-fns";
-import { getButtonType } from "@/app/(page)/[uri]/page";
-import { icons } from "@/app/(page)/[uri]/page";
-
-function getFileIcon(type) {
-    if (type?.startsWith('image/')) {
-      return faImage;
-    } else if (type === 'application/pdf') {
-      return faFilePdf;
-    }
-    return faFile;
-  }
+import { getButtonType, icons } from "@/app/(page)/[uri]/page";
 
 export default async function AnalyticsPage() {
   mongoose.connect(process.env.MONGO_URI);
@@ -72,8 +62,8 @@ export default async function AnalyticsPage() {
   if (!User || User.subscriptionStatus !== 'pro') {
     return (
       <SectionBox>
-        <h2>Аналитика не е достапна на овој план</h2>
-        <p>Доколку сакате да го надградите профилот <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
+        <h2>Аналитика не е достапна</h2>
+        <p>Овој профил не е активиран. Доколку сакате да го активирате или мислите дека е грешка ве молиме <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
       </SectionBox>
     )
   }
@@ -167,7 +157,7 @@ export default async function AnalyticsPage() {
             <div key={file.key || file.title} className="flex gap-6 items-center justify-center border-t border-[#e5e7eb] py-4">
               <div className="text-[#3b82f6] pl-4">
                 {file.url && file.type === 'application/pdf' && (
-                  <FontAwesomeIcon icon={faFile} width={24} height={24} />
+                  <FontAwesomeIcon icon={faFilePdf} width={24} height={24} />
                 ) || (
                   <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover object-center -mr-1 aspect-square" width={24} height={24} />
                 )}

@@ -7,7 +7,7 @@ import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { event } from "@/models/event";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFile } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFilePdf, faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faFacebook, faGithub, faInstagram, faTelegram, faTiktok, faWhatsapp, faYoutube, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 
 export const icons = {
@@ -71,16 +71,16 @@ function buttonLink(type, value) {
   }
 }
 
-// function getSafeImageSrc(src) {
-//   if (typeof src !== "string") return "/konekta_logo_4.png";
+function getSafeImageSrc(src) {
+  if (typeof src !== "string") return "/user-astronaut-solid-full.webp";
 
-//   // Allow only if it's a valid URL or starts with /
-//   if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
-//     return src;
-//   }
+  // Allow only if it's a valid URL or starts with /
+  if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
+    return src;
+  }
 
-//   return "/konekta_logo_4.png";
-// }
+  return "/user-astronaut-solid-full.webp";
+}
 
 // Helper function to get the button type from custom types
 export function getButtonType(buttonType) {
@@ -103,10 +103,10 @@ export default async function UserPage({params}) {
 
   if (!Page) {
     return (
-      <div className="p-8 text-center text-[#ef4444]">
+      <SectionBox className="p-8 !text-center !text-[#ef4444]">
         <h2>Страната не е пронајдена: <strong>/{uri}</strong></h2>
         <Link href="/" className="underline text-[#2563eb] mt-20">Врати се на почетна</Link>
-      </div>
+      </SectionBox>
     );
   }
 
@@ -140,7 +140,7 @@ export default async function UserPage({params}) {
       <div className="w-full h-screen fixed z-[-10] absolute top-0 bg-[#f9fafb]" style={{background: Page.bgColor, opacity: .2}}></div>
       {/* bg color or image set from account above the avatar image */}
       <div 
-        className="h-80 bg-[#dbeafe] bg-cover bg-center"
+        className="h-80 max-sm:h-60 bg-[#dbeafe] bg-cover bg-center"
         style={
           Page.bgType === 'color'
             ? { backgroundColor: Page.bgColor }
@@ -148,19 +148,25 @@ export default async function UserPage({params}) {
         }>
       </div>
       {/* avatar image */}
-      <Image src={User.image} alt={"avatar"} width={150} height={150} className="rounded-full border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
+      <Image src={getSafeImageSrc(User.image)} width={130} height={130} alt={"avatar"} className="rounded-full bg-white border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
       <div className="max-w-2xl mx-auto px-4 pb-10">
+        {/* personal info */}
         <div className="flex flex-col items-center mt-4">
           <h2 className="text-2xl font-bold">{Page.displayName}</h2>
           <h3 className="flex flex-row items-center gap-2 mt-1 text-[#374151] text-sm">
             {Page.company && (
               <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm">
-                <FontAwesomeIcon icon={faBriefcase} width={10} />
+                <FontAwesomeIcon icon={faBuilding} width={10} />
                 {Page.company}
                 <span>•</span>
               </span>
             )}
-            <span>{Page.position}</span>
+            {Page.position && (
+              <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm">
+                <FontAwesomeIcon icon={faBriefcase} width={10} />
+                {Page.position}
+              </span>
+            )}
           </h3>
           <h3 className="flex flex-row gap-2 mt-1 mb-1 text-[#374151] text-sm">
             {Page.location && (<span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm"><FontAwesomeIcon icon={faLocationDot} width={10} /> {Page.location}</span>)}
@@ -196,12 +202,12 @@ export default async function UserPage({params}) {
               target="_blank" 
               href={link.url} 
               className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
-              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 p-2 flex justify-center items-center">
+              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square !p-2 w-15 h-15 flex justify-center items-center">
                 {link.icon && (
-                  <Image src={link.icon} alt={'icon'} width={256} height={256} className="w-20 h-20 object-contain" />
+                  <Image src={link.icon} alt={'icon'} width={256} height={256} className="w-full h-full object-contain" />
                 )}
                 {!link.icon && (
-                  <FontAwesomeIcon icon={faLink} />
+                  <FontAwesomeIcon icon={faLink} width={50} height={50} className="text-xl object-cover" />
                 )}
               </div>
               <div>
@@ -220,9 +226,9 @@ export default async function UserPage({params}) {
               target="_blank" 
               href={file.url} 
               className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
-              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 p-2 flex justify-center items-center">
+              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 !p-2 flex justify-center items-center">
                 {file.url && file.type === 'application/pdf' && (
-                  <FontAwesomeIcon icon={faFile} />
+                  <FontAwesomeIcon icon={faFilePdf} width={50} height={50} className="text-xl object-cover" />
                 ) || (
                   <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover" width={256} height={256} />
                 )}

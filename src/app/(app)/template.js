@@ -4,11 +4,11 @@ import mongoose from "mongoose";
 import Link from "next/link";
 import Image from "next/image";
 import AppSidebar from "@/components/layout/appSidebar";
+import { closeAside, openAside } from "@/components/mobMenu";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { page } from "@/models/page";
-import { closeAside, openAside } from "@/components/mobMenu";
 import { Toaster } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare, faBars, faClose } from "@fortawesome/free-solid-svg-icons";
@@ -34,14 +34,14 @@ export default async function AppTemplate({ children, ...rest }) {
   const Page = await page.findOne({owner: session.user.email});
 
   function getSafeImageSrc(src) {
-  if (typeof src !== "string") return "/konekta_logo_4.png";
+  if (typeof src !== "string") return "/user-astronaut-solid-full.webp";
 
   // Allow only if it's a valid URL or starts with /
   if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
     return src;
   }
 
-  return "/konekta_logo_4.png";
+  return "/user-astronaut-solid-full.webp";
 }
 
   return (
