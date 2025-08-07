@@ -19,7 +19,6 @@ export default function RegisterForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: e.target.name.value,
           email: e.target.email.value,
           password: e.target.password.value,
         }),
@@ -31,7 +30,7 @@ export default function RegisterForm() {
         toast.success('Профилот е успешно креиран! Ве молиме најавете се.');
         setTimeout(() => {
           router.push("/");
-        }, 1500);
+        }, 500);
       } else {
         toast.error(data.error || 'Профилот не е креиран. Ве молиме обидете се повторно.');
       }
@@ -47,25 +46,12 @@ export default function RegisterForm() {
     <div className="w-full">
       <form onSubmit={handleSubmit} className="space-y-2">
         <div className="input-div">
-          <label htmlFor="name">Име</label>
-          <input
-            id="name" name="name" type="text"
-            required disabled={isLoading} placeholder="Име"
-          />
-        </div>
-        <div className="input-div">
           <label htmlFor="email">Е-пошта</label>
-          <input
-            id="email" name="email" type="email"
-            required disabled={isLoading} placeholder="Е-пошта"
-          />
+          <input id="email" name="email" type="email" required disabled={isLoading} placeholder="Е-пошта" />
         </div>
         <div className="input-div mb-4">
           <label htmlFor="password">Лозинка</label>
-          <input
-            id="password" name="password" type="password"
-            required disabled={isLoading} placeholder="Лозинка"
-          />
+          <input id="password" name="password" type="password" required disabled={isLoading} placeholder="Лозинка" />
         </div>
         <LoadingButton type="submit" isLoading={isLoading} loadingText="Се креира профилот...">
           Регистрирај се
