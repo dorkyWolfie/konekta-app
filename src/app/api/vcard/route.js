@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server';
 import { page } from '@/models/page';
 import { user } from '@/models/user';
 
-function cyrillicToLatin(text) {
+export function cyrillicToLatin(text) {
   const map = {
     'А': 'A',  'а': 'a',
     'Б': 'B',  'б': 'b',
