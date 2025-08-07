@@ -79,7 +79,7 @@ export default async function AnalyticsPage() {
   }
 
   return (
-    <div>
+    <div className="shrink">
       <SectionBox>
         <h2 className="text-xl mb-6 font-bold text-center">Прегледи</h2>
         <Chart data={groupedViews.map(o => ({

@@ -68,14 +68,14 @@ export default function Chart({ data }) {
           onClick={() => setPage(page - 1)}
           className="flex gap-2 items-center px-4 py-1 bg-gray-200 text-sm rounded disabled:opacity-50">
           <FontAwesomeIcon icon={faArrowLeft} />
-          <span>Претходна</span>
+          <span className="max-md:hidden">Претходна</span>
         </button>
         <span className="text-sm text-gray-500">Страница {page + 1} од {totalPages}</span>
         <button
           disabled={page === totalPages - 1}
           onClick={() => setPage(page + 1)}
           className="flex gap-2 items-center px-4 py-1 bg-gray-200 text-sm rounded disabled:opacity-50">
-          <span>Следна</span>
+          <span className="max-md:hidden">Следна</span>
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
       </div>
