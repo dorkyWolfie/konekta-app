@@ -68,6 +68,10 @@ export default async function AnalyticsPage() {
     )
   }
 
+  const truncateText = (text, maxLength) => {
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
+
   return (
     <div className="shrink">
       <SectionBox>
@@ -98,7 +102,7 @@ export default async function AnalyticsPage() {
               </div>
               <div className="grow">
                 <h3>{button.title || 'Нема наслов'}</h3>
-                <a target="_blank" href={button.value} className="text-[#1d4ed8] text-xs">{button.value}</a>
+                <Link target="_blank" href={button.value} className="text-[#1d4ed8] text-xs">{button.value}</Link>
               </div>
               <div className="text-center flex items-center justify-center gap-4">
                 <div className="flex flex-col gap-2">
@@ -132,7 +136,7 @@ export default async function AnalyticsPage() {
               </div>
               <div className="grow">
                 <h3>{link.title || 'Нема наслов'}</h3>
-                <a target="_blank" href={link.url} className="text-[#1d4ed8] text-xs">{link.url}</a>
+                <Link target="_blank" href={link.url} className="text-[#1d4ed8] text-xs">{link.url}</Link>
               </div>
               <div className="text-center flex items-center justify-center gap-4">
                 <div className="flex flex-col gap-2">
@@ -164,7 +168,10 @@ export default async function AnalyticsPage() {
               </div>
               <div className="grow">
                 <h3>{file.title || 'Нема наслов'}</h3>
-                <a target="_blank" href={file.url} className="text-[#1d4ed8] text-xs">{file.url}</a>
+                <Link target="_blank" href={file.url} title={file.url} className="text-[#1d4ed8] text-xs w-3">
+                  <span className="block sm:hidden">{truncateText(file.url, 30)}</span>
+                  <span className="hidden sm:block">{file.url}</span>
+                </Link>
               </div>
               <div className="text-center flex items-center justify-center gap-4">
                 <div className="flex flex-col gap-2">
