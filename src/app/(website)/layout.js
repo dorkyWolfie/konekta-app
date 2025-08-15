@@ -1,6 +1,7 @@
 import "../globals.css";
 import { Manrope } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { GoogleAnalytics } from "@next/third-parties/google"
 import Footer from "@/components/footer";
 
 
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
         {children}
         <Toaster />
         <Footer />
+        <GoogleAnalytics gaId="G-V29E657058" />
       </body>
     </html>
   );
