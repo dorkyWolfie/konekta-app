@@ -1,8 +1,10 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import clientPromise from "@/libs/mongoClient";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
+import { user as User } from "@/models/user";
+import { discordRegistrationNotification } from "@/utils/discordNotifications";
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -26,11 +28,10 @@ export const authOptions = {
         }
 
         try {
-          const client = await clientPromise;
-          const db = client.db();
-          const user = await db.collection(process.env.MONGO_COLLECTION_1).findOne({ email: credentials.email });
+          await mongoose.connect(process.env.MONGO_URI);
+          const user = await User.findOne({ email: credentials.email.toLowerCase() });
           
-          if (!user) {
+          if (!user || !user.password) {
             return null;
           }
           
@@ -38,6 +39,12 @@ export const authOptions = {
           if (!isValid) {
             return null;
           }
+
+          // Update last login
+          await User.findByIdAndUpdate(user._id, {
+            lastLoginAt: new Date(),
+            isNewUser: false
+          });
           
           return {
             id: user._id.toString(),
@@ -55,42 +62,56 @@ export const authOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       try {
-        const client = await clientPromise;
-        const db = client.db();
-        
-        // Handle both Google and Credentials sign-in
-        const existingUser = await db.collection(process.env.MONGO_COLLECTION_1).findOne({ 
-          email: user.email 
-        });
+        await mongoose.connect(process.env.MONGO_URI);
         
         if (account.provider === "google") {
-          // Create or update Google user
-          const userData = {
-            name: user.name,
-            email: user.email,
-            image: user.image,
-            subscriptionStatus: existingUser?.subscriptionStatus || 'basic',
-            provider: 'google',
-            updatedAt: new Date()
-          };
+          const existingUser = await User.findOne({ 
+            email: user.email.toLowerCase() 
+          });
           
           if (!existingUser) {
-            userData.createdAt = new Date();
+            // Create new Google user
+            const dbUser = await User.create({
+              name: user.name,
+              email: user.email.toLowerCase(),
+              image: user.image,
+              provider: 'google',
+              googleId: account.providerAccountId,
+              subscriptionStatus: 'basic',
+              lastLoginAt: new Date(),
+              isNewUser: true
+            });
+
+            await discordRegistrationNotification({
+              email: user.email,
+              name: user.name,
+              provider: 'google',
+              timestamp: new Date(),
+              isNewUser: true,
+              subscriptionStatus: dbUser.subscriptionStatus
+            });
+
+          } else {
+            // Update existing user
+            await User.findByIdAndUpdate(
+              existingUser._id,
+              { 
+                name: user.name,
+                image: user.image,
+                googleId: account.providerAccountId,
+                lastLoginAt: new Date(),
+                isNewUser: false
+              }
+            );
           }
-          
-          await db.collection(process.env.MONGO_COLLECTION_1).updateOne(
-            { email: user.email },
-            { $set: userData },
-            { upsert: true }
-          );
         }
-        
         return true;
       } catch (error) {
         console.error("Error in signIn callback:", error);
-        return false; // Still allow sign in even if DB update fails
+        return false;
       }
     },
+
     async jwt({ token, user, account }) {
       // Include user data in JWT token
       if (user) {
@@ -103,15 +124,15 @@ export const authOptions = {
       // Fetch fresh user data from database on each token refresh
       if (token.email) {
         try {
-          const client = await clientPromise;
-          const db = client.db();
-          const dbUser = await db.collection(process.env.MONGO_COLLECTION_1).findOne({ 
-            email: token.email 
-          });
+          await mongoose.connect(process.env.MONGO_URI);
+          const dbUser = await User.findOne({ 
+            email: token.email.toLowerCase() 
+          }).select('name image subscriptionStatus');
           
           if (dbUser) {
-            token.image = dbUser.image; // This ensures avatar updates are reflected
+            token.image = dbUser.image;
             token.name = dbUser.name;
+            token.subscriptionStatus = dbUser.subscriptionStatus;
           }
         } catch (error) {
           console.error("Error fetching user data in JWT callback:", error);
@@ -120,6 +141,7 @@ export const authOptions = {
       
       return token;
     },
+
     async session({ session, token }) {
       // Pass token data to session
       if (token) {
@@ -127,11 +149,20 @@ export const authOptions = {
         session.user.email = token.email;
         session.user.name = token.name;
         session.user.image = token.image;
+        session.user.subscriptionStatus = token.subscriptionStatus;
       }
       return session;
     },
   },
+
+  // events: {
+  //   async signIn({ user, account, profile, isNewUser }) {
+  //     // Additional event handling if needed
+  //     // console.log(`User ${user.email} signed in with ${account.provider}`);
+  //   }
+  // }
 };
+
 
 export default async function auth(req, res) {
   return await NextAuth(req, res, authOptions);

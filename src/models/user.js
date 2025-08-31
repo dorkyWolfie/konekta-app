@@ -7,7 +7,27 @@ const UserSchema = new Schema({
   image: String,
   emailVerified: Date,
   subscriptionStatus: { type: String, enum: ['basic', 'pro'], default: 'basic'},
-  subscriptionExpiresAt: { type: Date },
+  subscriptionExpiresAt: Date,
+  provider: { type: String, enum: ['google', 'credentials'], required: true, default: 'credentials' },
+  // Google-specific fields
+  googleId: String,
+  // Track registration vs sign-in
+  isNewUser: { type: Boolean, default: true },
+  lastLoginAt: Date,
+}, {
+  timestamps: true // Adds createdAt and updatedAt automatically
+});
+
+// Index for faster lookups
+UserSchema.index({ email: 1 });
+UserSchema.index({ googleId: 1 });
+
+// Pre-save middleware to set isNewUser to false after first save
+UserSchema.pre('save', function(next) {
+  if (!this.isNew) {
+    this.isNewUser = false;
+  }
+  next();
 });
 
 export const user = models?.user || model("user", UserSchema);
