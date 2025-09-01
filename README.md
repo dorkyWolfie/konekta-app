@@ -14,6 +14,7 @@
 - **MongoDB + Mongoose** (database)
 - **Tailwind CSS**
 - **Coolify** (deployment)
+- **AWS S3** (storage)
 
 ## 🌍 Deployment
 
@@ -23,4 +24,5 @@ Database hosted on MongoDB Atlas.
 ## 🏗️ Test profile
 
 Username: test@test.com
+
 Password: 123
