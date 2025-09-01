@@ -19,3 +19,8 @@
 
 Hosted on Coolify Self Hosted.
 Database hosted on MongoDB Atlas.
+
+## 🏗️ Test profile
+
+Username: test@test.com
+Password: 123
