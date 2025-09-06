@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import mongoose from "mongoose";
 import { user as User } from "@/models/user";
 import { discordRegistrationNotification } from "@/utils/discordNotifications";
+import { welcomeEmail } from "@/utils/emailNotifications";
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -91,6 +92,12 @@ export const authOptions = {
               subscriptionStatus: dbUser.subscriptionStatus
             });
 
+            await welcomeEmail({
+              email: user.email,
+              name: user.name,
+              provider: 'google'
+            });
+
           } else {
             // Update existing user
             await User.findByIdAndUpdate(
@@ -112,8 +119,7 @@ export const authOptions = {
       }
     },
 
-    async jwt({ token, user, account }) {
-      // Include user data in JWT token
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
         token.email = user.email;

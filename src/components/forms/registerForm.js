@@ -19,6 +19,7 @@ export default function RegisterForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          name: e.target.name.value,
           email: e.target.email.value,
           password: e.target.password.value,
         }),
@@ -45,6 +46,10 @@ export default function RegisterForm() {
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="input-div">
+          <label htmlFor="name">Име</label>
+          <input id="name" name="name" type="text" required disabled={isLoading} placeholder="Име" />
+        </div>
         <div className="input-div">
           <label htmlFor="email">Е-пошта</label>
           <input id="email" name="email" type="email" required disabled={isLoading} placeholder="Е-пошта" />

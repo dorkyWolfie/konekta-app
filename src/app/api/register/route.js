@@ -1,5 +1,6 @@
 import { user as User } from "@/models/user";
 import { discordRegistrationNotification } from "@/utils/discordNotifications";
+import { welcomeEmail } from "@/utils/emailNotifications";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
@@ -31,7 +32,9 @@ export async function POST(req) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+
     const newUser = await User.create({
+      name: name?.trim() || null,
       email: email.toLowerCase(),
       password: hashedPassword,
       provider: 'credentials',
@@ -47,6 +50,12 @@ export async function POST(req) {
       timestamp: new Date(),
       isNewUser: true,
       subscriptionStatus: newUser.subscriptionStatus
+    });
+
+    await welcomeEmail({
+      email: newUser.email,
+      name: newUser.name,
+      provider: 'credentials'
     });
 
     return new Response(
