@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function welcomeEmail({ email, name, provider }) {
   try {
-    const welcomeSubject = "Welcome to our platform! 🎉";
+    const welcomeSubject = "Добредојде во Конекта! 🎉";
     
     // Different welcome messages based on provider
     const providerMessage = provider === 'google' 
@@ -17,7 +17,8 @@ export async function welcomeEmail({ email, name, provider }) {
     <head>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Добрадојде!</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+      <title>Добредојде во Конекта 🚀!</title>
       <style>
         body {
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -27,22 +28,27 @@ export async function welcomeEmail({ email, name, provider }) {
           margin: 0 auto;
           padding: 20px;
         }
+        i {
+          font-size: 1.4em;
+          padding: 0 6px;
+          color: #666;
+        }
         .header {
           text-align: center;
           padding: 30px 0;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #2563eb;
           color: white;
-          border-radius: 10px;
           margin-bottom: 30px;
         }
         .header h1 {
           margin: 0;
           font-size: 2.2em;
+          line-height: normal;
         }
-        .content {
-          background: #f8f9fa;
+        .content,
+        .features {
+          background: #f5f5f5;
           padding: 30px;
-          border-radius: 10px;
           margin-bottom: 20px;
         }
         .provider-badge {
@@ -50,25 +56,17 @@ export async function welcomeEmail({ email, name, provider }) {
           background: ${provider === 'google' ? '#4285f4' : '#5865f2'};
           color: white;
           padding: 5px 15px;
-          border-radius: 20px;
           font-size: 0.9em;
           margin: 10px 0;
         }
         .cta-button {
           display: inline-block;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #2563eb;
           color: white;
           text-decoration: none;
           padding: 12px 30px;
-          border-radius: 25px;
           margin: 20px 0;
           font-weight: bold;
-        }
-        .features {
-          background: white;
-          padding: 20px;
-          border-radius: 10px;
-          margin: 20px 0;
         }
         .feature-item {
           display: flex;
@@ -91,78 +89,78 @@ export async function welcomeEmail({ email, name, provider }) {
     </head>
     <body>
       <div class="header">
-        <h1>🎉 Добредојде во Конекта ${name ? `, ${name}` : ''}!</h1>
+        <h1>Здраво, и добредојде во Конекта 👋 ${name ? `, ${name}` : ''}!</h1>
       </div>
-      
       <div class="content">
-        <h2>Ти благодариме што ни се придружи! 🚀</h2>
+        <h2>Драго ни е што одбра да бидеш дел од нашата заедница.</h2>
         <p>${providerMessage}</p>
-        
         <div class="provider-badge">
-          ${provider === 'google' ? '🟦 Signed up with Google' : '📧 Email Registration'}
+          ${provider === 'google' ? 'Се најави со Google' : '📧 Се регистрираше со е-пошта'}
         </div>
-        
-        <p>We're excited to have you as part of our community. Here's what you can do next:</p>
+        <p>👉 Доколку твојот профил сè уште не е активен, те молиме почекај неколку минути и обиди се повторно.</p>
+        <p>Ако и по 5 минути не се појави, можно е да настанала грешка. Но, не грижи се – секогаш можеш да ни пишеш и ние брзо ќе ја поправиме.</p>
+        <p>Во меѓувреме, еве што можеш да направиш за да го искористиш максимумот од Конекта:</p>
       </div>
-
       <div class="features">
         <div class="feature-item">
           <span class="feature-icon">✨</span>
           <div>
-            <strong>Explore Features</strong><br>
-            Discover all the amazing tools we have to offer
+            <strong>Истражи ги карактеристиките</strong><br>
+            Откриј како твојата дигитална картичка може да ти помогне полесно да се поврзеш со луѓето.
           </div>
         </div>
-        
         <div class="feature-item">
           <span class="feature-icon">🔧</span>
           <div>
-            <strong>Complete Your Profile</strong><br>
-            Add more details to personalize your experience
+            <strong>Комплетирај го твојот профил</strong><br>
+            Додади ги сите важни детали – контакт информации, линкови, портфолио – и направи го профилот уникатен како тебе.
           </div>
         </div>
-        
         <div class="feature-item">
           <span class="feature-icon">🎯</span>
           <div>
-            <strong>Start Your Journey</strong><br>
-            Jump right in and make the most of your account
+            <strong>Започни го твоето патување</strong><br>
+            Конекта е тука за да создава паметни и квалитетни конекции. Искористи ја целосно и направи го твоето патување низ кариерата и животот уште поуспешно.
           </div>
         </div>
       </div>
-
+      <div class="features">Ти посакуваме добредојде и со нетрпение очекуваме да видиме како ќе ја користиш Конекта!</div>
       <div style="text-align: center;">
-        <a href="${process.env.NEXTAUTH_URL || 'https://yoursite.com'}/dashboard" class="cta-button">
-          Get Started Now →
+        <a href="${process.env.NEXTAUTH_URL}/account" class="cta-button">
+          Најави се тука →
         </a>
       </div>
-
       <div class="footer">
-        <p>Need help? Just reply to this email and we'll be happy to assist you!</p>
-        <p>© 2025 Your Company Name. All rights reserved.</p>
+        <div>
+          <a href="https://www.facebook.com/profile.php?id=61578597457088"><i class="fa-brands fa-facebook"></i></a>
+          <a href="https://www.instagram.com/konektamk"><i class="fa-brands fa-instagram"></i></a>
+          <a href="mailto:info@konekta.mk"><i class="fa-solid fa-envelope"></i></a>
+        </div>
+        <p>Ти треба помош? Одговори на оваа е-пошта и со задоволство ќе ти помогнеме!</p>
+        <p>© 2025 Конекта. Сите права се заджани.</p>
       </div>
     </body>
     </html>`;
 
     const textContent = `
-Welcome aboard${name ? `, ${name}` : ''}! 🎉
+Здраво, и добредојде во Конекта 👋 ${name ? `, ${name}` : ''}!
 
 ${providerMessage}
 
-Here's what you can do next:
-✨ Explore Features - Discover all the amazing tools we have to offer
-🔧 Complete Your Profile - Add more details to personalize your experience  
-🎯 Start Your Journey - Jump right in and make the most of your account
+Eве што можеш да направиш за да го искористиш максимумот од Конекта:
+✨ Истражи ги карактеристиките - Откриј како твојата дигитална картичка може да ти помогне полесно да се поврзеш со луѓето.
+🔧 Комплетирај го твојот профил - Додади ги сите важни детали – контакт информации, линкови, портфолио – и направи го профилот уникатен како тебе.  
+🎯 Започни го твоето патување - Конекта е тука за да создава паметни и квалитетни конекции. Искористи ја целосно и направи го твоето патување низ кариерата и животот уште поуспешно.
 
-Get started: ${process.env.NEXTAUTH_URL || 'https://yoursite.com'}/dashboard
+Започни тука: ${process.env.NEXTAUTH_URL}/account
 
-Need help? Just reply to this email and we'll be happy to assist you!
+Ти треба помош? Одговори на оваа е-пошта и со задоволство ќе ти помогнеме!
 
-© 2025 Your Company Name. All rights reserved.
+© 2025 Конекта. Сите права се заджани.
 `;
 
     const { data, error } = await resend.emails.send({
-      from: process.env.SENDER_EMAIL,
+      from: process.env.RECEIVER_EMAIL,
       to: [email],
       subject: welcomeSubject,
       html: htmlContent,
@@ -174,7 +172,7 @@ Need help? Just reply to this email and we'll be happy to assist you!
       return { success: false, error };
     }
 
-    console.log('Welcome email sent successfully:', data);
+    // console.log('Welcome email sent successfully:', data);
     return { success: true, data };
 
   } catch (error) {
