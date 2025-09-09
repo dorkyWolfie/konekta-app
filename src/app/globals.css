@@ -224,3 +224,9 @@ textarea {
   @apply outline-none;
 }
 /* ---- CONTACT FORM END ---- */
+
+@media screen and (max-width: 390px) {
+  .smallLink {
+    @apply hidden;
+  }
+}
