@@ -7,7 +7,9 @@ import { page } from '@/models/page';
 const LINK_SCHEMA = {
   key: { type: 'string', required: true },
   title: { type: 'string', maxLength: 100, required: true },
+  title_en: { type: 'string', maxLength: 100, required: false },
   subtitle: { type: 'string', maxLength: 200, required: false },
+  subtitle_en: { type: 'string', maxLength: 200, required: false },
   url: { type: 'string', maxLength: 500, required: true },
   icon: { type: 'string', required: false }
 };
@@ -55,12 +57,27 @@ function validateLinksData(links) {
     //   linkErrors.push(`Link ${index + 1}: Icon name exceeds maximum length`);
     // }
 
+    // Check optional English fields
+    if (link.title_en && typeof link.title_en !== 'string') {
+      linkErrors.push(`Link ${index + 1}: English title must be a string`);
+    } else if (link.title_en && link.title_en.trim().length > LINK_SCHEMA.title_en.maxLength) {
+      linkErrors.push(`Link ${index + 1}: English title exceeds maximum length`);
+    }
+
+    if (link.subtitle_en && typeof link.subtitle_en !== 'string') {
+      linkErrors.push(`Link ${index + 1}: English subtitle must be a string`);
+    } else if (link.subtitle_en && link.subtitle_en.trim().length > LINK_SCHEMA.subtitle_en.maxLength) {
+      linkErrors.push(`Link ${index + 1}: English subtitle exceeds maximum length`);
+    }
+
     errors.push(...linkErrors);
 
     return {
       key: link.key?.trim() || '',
       title: link.title?.trim() || '',
+      title_en: link.title_en?.trim() || '',
       subtitle: link.subtitle?.trim() || '',
+      subtitle_en: link.subtitle_en?.trim() || '',
       url: link.url?.trim() || '',
       icon: link.icon?.trim() || ''
     };
@@ -83,7 +100,7 @@ function isValidEmail(email) {
   return emailRegex.test(email) && email.length <= 254;
 }
 
-export async function savePageLinks(links) {
+export async function savePageLinks(links, formData) {
   try {
     // Connect to database with proper error handling
     if (mongoose.connection.readyState === 0) {
@@ -102,19 +119,29 @@ export async function savePageLinks(links) {
       throw new Error(`Validation failed: ${errors.join(', ')}`);
     }
 
+
     // Sanitize email for database query
     const userEmail = session.user.email.trim().toLowerCase();
+
+    // Prepare update data
+    const updateData = {
+      links: validatedLinks,
+      updatedAt: new Date()
+    };
+
+    // Handle showEnglishTranslation if provided
+    if (formData && formData.has('showEnglishTranslation')) {
+      const showEnglishValue = formData.get('showEnglishTranslation');
+      updateData.showEnglishTranslation = showEnglishValue === 'true' || showEnglishValue === true;
+    }
 
     // Update with proper error handling
     const result = await page.updateOne(
       { owner: userEmail },
-      { 
-        $set: { 
-          links: validatedLinks,
-          updatedAt: new Date()
-        } 
+      {
+        $set: updateData
       },
-      { 
+      {
         runValidators: true,
         upsert: false // Don't create if doesn't exist
       }

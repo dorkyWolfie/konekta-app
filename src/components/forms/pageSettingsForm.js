@@ -12,6 +12,7 @@ import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBrush, faCloudArrowUp, faArrowRight, faSave } from "@fortawesome/free-solid-svg-icons";
 import { faImage } from "@fortawesome/free-regular-svg-icons";
+import { GB } from 'country-flag-icons/react/3x2';
 
 function getSafeImageSrc(src) {
   if (typeof src !== "string") 
@@ -31,6 +32,7 @@ export default function PageSettingsForm({page, user}) {
   const [bgColor, setBgColor] = useState(page.bgColor);
   const [bgImage, setBgImage] = useState(page.bgImage);
   const [avatar, setAvatar] = useState(user?.image);
+  const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
 
   async function saveBaseSettings(formData) {
     const result = await savePageSettings(formData);
@@ -115,6 +117,7 @@ export default function PageSettingsForm({page, user}) {
                 onChange={handleAvatarImageChange} 
                 id="avatarIn" type="file" className="hidden" />
               <input type="hidden" name="avatar" value={avatar || 'avatar'} />
+              <input type="hidden" name="showEnglishTranslation" value={showEnglish} />
             </div>
           </div>
           <div>
@@ -128,8 +131,60 @@ export default function PageSettingsForm({page, user}) {
             <input type="text" id="locationIn" name="location" defaultValue={page.location} placeholder="Од каде си? / Каде живееш?" />
             <label className="input-label" htmlFor="bioIn">Кратка биографија</label>
             <textarea name="bio" id="bioIn" defaultValue={page.bio} placeholder="Накратко опиши се себеси." />
+
+            {/* English Translation Toggle */}
+            <div className="border-t pt-4 mt-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-medium text-[#374151] flex items-center gap-1"><GB className="w-4 h-3" /> Додади Англиски превод</span>
+                <button
+                  type="button"
+                  onClick={() => setShowEnglish(!showEnglish)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    showEnglish ? 'bg-[#2563eb]' : 'bg-[#e5e7eb]'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      showEnglish ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {showEnglish && (
+                <div className="space-y-4 p-4 bg-[#eff6ff]">
+                  <h3 className="font-medium text-[#1e3a8a] mb-3 flex items-center gap-1"><GB className="w-4 h-3" /> English Translation</h3>
+
+                  <div>
+                    <label className="input-label" htmlFor="nameIn_en">Name</label>
+                    <input type="text" id="nameIn_en" name="displayName_en" defaultValue={page.displayName_en} placeholder="Full name" />
+                  </div>
+
+                  <div>
+                    <label className="input-label" htmlFor="companyIn_en">Company</label>
+                    <input type="text" id="companyIn_en" name="company_en" defaultValue={page.company_en} placeholder="Where do you work?" />
+                  </div>
+
+                  <div>
+                    <label className="input-label" htmlFor="positionIn_en">Position</label>
+                    <input type="text" id="positionIn_en" name="position_en" defaultValue={page.position_en} placeholder="Your job title, e.g. Developer, Accountant..." />
+                  </div>
+
+                  <div>
+                    <label className="input-label" htmlFor="locationIn_en">Location</label>
+                    <input type="text" id="locationIn_en" name="location_en" defaultValue={page.location_en} placeholder="Where are you from? / Where do you live?" />
+                  </div>
+
+                  <div>
+                    <label className="input-label" htmlFor="bioIn_en">Bio</label>
+                    <textarea name="bio_en" id="bioIn_en" defaultValue={page.bio_en} placeholder="Brief description about yourself." />
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="max-w-[200px] mx-auto mt-4">
-              <SubmitButton> 
+              <SubmitButton>
                 <FontAwesomeIcon icon={faSave} />
                 <span>Зачувај</span>
               </SubmitButton>

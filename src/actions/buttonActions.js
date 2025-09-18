@@ -14,6 +14,7 @@ const BUTTON_SCHEMA = {
   key: { type: 'string', required: true },
   type: { type: 'string', required: true },
   title: { type: 'string', maxLength: 100, required: true },
+  title_en: { type: 'string', maxLength: 100, required: false },
   value: { type: 'string', maxLength: 500, required: true },
   icon: { type: 'string', maxLength: 500, required: false },
   isActive: { type: 'boolean', required: false, default: true },
@@ -124,12 +125,20 @@ function validateButtonsData(buttonsData) {
       buttonErrors.push(`Button ${index + 1}: isCustom must be a boolean`);
     }
 
+    // Validate optional title_en field
+    if (button.title_en && typeof button.title_en !== 'string') {
+      buttonErrors.push(`Button ${index + 1}: English title must be a string`);
+    } else if (button.title_en && button.title_en.trim().length > BUTTON_SCHEMA.title_en.maxLength) {
+      buttonErrors.push(`Button ${index + 1}: English title exceeds maximum length`);
+    }
+
     errors.push(...buttonErrors);
 
     return {
       key: button.key?.trim() || '',
       type: button.type?.trim() || '',
       title: button.title?.trim() || '',
+      title_en: button.title_en?.trim() || '',
       value: button.value?.trim() || '',
       icon: button.icon?.trim() || '',
       isActive: button.isActive !== undefined ? button.isActive : true,
@@ -155,7 +164,7 @@ function isValidEmail(email) {
 }
 
 // Main function - accepts only array format
-export async function savePageButtons(buttonsArray) {
+export async function savePageButtons(buttonsArray, formData) {
   try {
     // Connect to database with proper error handling
     if (mongoose.connection.readyState === 0) {
@@ -174,22 +183,32 @@ export async function savePageButtons(buttonsArray) {
       throw new Error(`Validation failed: ${errors.join(', ')}`);
     }
 
+
     // Sanitize email for database query
     const userEmail = session.user.email.trim().toLowerCase();
+
+    // Prepare update data
+    const updateData = {
+      buttons: validatedButtons,  // Store as array
+      updatedAt: new Date()
+    };
+
+    // Handle showEnglishTranslation if provided
+    if (formData && formData.has('showEnglishTranslation')) {
+      const showEnglishValue = formData.get('showEnglishTranslation');
+      updateData.showEnglishTranslation = showEnglishValue === 'true' || showEnglishValue === true;
+    }
 
     // Update with proper error handling - only store array format
     const result = await page.updateOne(
       { owner: userEmail },
-      { 
-        $set: { 
-          buttons: validatedButtons,  // Store as array
-          updatedAt: new Date()
-        },
+      {
+        $set: updateData,
         $unset: {
           buttonsArray: ""  // Remove old buttonsArray field if it exists
         }
       },
-      { 
+      {
         runValidators: true,
         upsert: false // Don't create if doesn't exist
       }

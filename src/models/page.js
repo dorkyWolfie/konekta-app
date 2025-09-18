@@ -14,6 +14,16 @@ const PageSchema = new Schema({
     buttons: {type: Object, default: []},
     links: {type: Object, default: []},
     files: {type: Object, default: []},
+    // English translations (optional)
+    displayName_en: {type: String, default: ''},
+    company_en: {type: String, default: ''},
+    position_en: {type: String, default: ''},
+    location_en: {type: String, default: ''},
+    bio_en: {type: String, default: ''},
+    links_en: {type: Object, default: []},
+    files_en: {type: Object, default: []},
+    // Translation settings
+    showEnglishTranslation: {type: Boolean, default: false},
 }, {timestamps: true});
 
 export const page = models?.page || model("page", PageSchema);

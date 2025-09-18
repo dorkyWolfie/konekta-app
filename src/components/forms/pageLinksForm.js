@@ -4,6 +4,7 @@ import SectionBox from "../layout/sectionBox";
 import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faComment, faGripLines, faLink, faPlus, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { GB } from 'country-flag-icons/react/3x2';
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { upload } from "@/libs/upload";
@@ -14,10 +15,11 @@ import { useRouter } from 'next/navigation';
 export default function PageLinksForm({page,user}) {
   const router = useRouter();
   const [links, setLinks] = useState(page.links || []);
+  const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
 
-  async function save() {
+  async function save(formData) {
     try {
-      const result = await savePageLinks(links);
+      const result = await savePageLinks(links, formData);
 
       if (result.success) {
         toast.success('Зачувано!');
@@ -30,13 +32,16 @@ export default function PageLinksForm({page,user}) {
     }
   }
 
+
   function addNewLink() {
     setLinks(prev => [
       ...prev, 
       {
         key: Date.now().toString(),
         title: '',
+        title_en: '',
         subtitle: '',
+        subtitle_en: '',
         icon: '',
         url: ''
       }
@@ -79,6 +84,7 @@ function removeLink(linkKeyToRemove) {
   return (
     <SectionBox>
       <form action={save}>
+        <input type="hidden" name="showEnglishTranslation" value={showEnglish} />
         <h2 className="text-2xl font-bold mb-4">Линкови</h2>
         <button 
           onClick={addNewLink} type="button" 
@@ -122,14 +128,30 @@ function removeLink(linkKeyToRemove) {
                 </div>
                 <div className="grow">
                   <label className="input-label">Наслов</label>
-                  <input 
-                    value={l.title} onChange={ev => handleLinkChange(l.key, 'title', ev)} 
+                  <input
+                    value={l.title} onChange={ev => handleLinkChange(l.key, 'title', ev)}
                     type="text" placeholder="Наслов" />
+                  {showEnglish && (
+                    <input
+                      value={l.title_en || ''}
+                      onChange={ev => handleLinkChange(l.key, 'title_en', ev)}
+                      type="text" placeholder="English title"
+                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                    />
+                  )}
                   <label className="input-label">Поднаслов</label>
-                  <input 
+                  <input
                     value={l.subtitle} onChange={ev => handleLinkChange(l.key, 'subtitle', ev)} type="text" placeholder="Поднаслов (не е задолжително)" />
+                  {showEnglish && (
+                    <input
+                      value={l.subtitle_en || ''}
+                      onChange={ev => handleLinkChange(l.key, 'subtitle_en', ev)}
+                      type="text" placeholder="English subtitle (optional)"
+                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                    />
+                  )}
                   <label className="input-label">Линк</label>
-                  <input 
+                  <input
                     value={l.url} onChange={ev => handleLinkChange(l.key, 'url', ev)} type="text" placeholder="https://website.com" />
                 </div>
               </div>
@@ -142,6 +164,30 @@ function removeLink(linkKeyToRemove) {
                     <p>Немате додадено линкови. Кликнете на &quot;Внеси нов линк&quot; за да започнете.</p>
                   </div>
                 )}
+
+        {/* English Translation Toggle */}
+        <div className="border-t pt-4 mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="font-medium text-[#374151] flex items-center gap-1"><GB className="w-4 h-3" /> Додади Англиски превод</span>
+            <button
+              type="button"
+              onClick={() => setShowEnglish(!showEnglish)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                showEnglish ? 'bg-[#2563eb]' : 'bg-[#e5e7eb]'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  showEnglish ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          {showEnglish && (
+            <p className="text-sm text-[#4b5563] mb-4 flex items-center gap-1"><GB className="w-4 h-3" /> English fields will appear below each link title and subtitle when enabled.</p>
+          )}
+        </div>
+
         <div className="max-w-[200px] mx-auto mt-4 ">
           <SubmitButton>
             <FontAwesomeIcon icon={faSave} />

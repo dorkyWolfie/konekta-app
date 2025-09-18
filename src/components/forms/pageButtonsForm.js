@@ -5,6 +5,7 @@ import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faGripLines, faPlus, faSave, faTrash, faEnvelope, faPhone, faGlobe, faUser, faComment } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram, faFacebook, faTwitter, faLinkedin, faYoutube, faTiktok, faGithub, faWhatsapp, faDiscord, faTelegram } from "@fortawesome/free-brands-svg-icons";
+import { GB } from 'country-flag-icons/react/3x2';
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { upload } from "@/libs/upload";
@@ -39,6 +40,7 @@ export default function PageButtonsForm({ page, user }) {
         key: button.key || `${button.type}_${Date.now()}`,
         type: button.type || 'custom',
         title: button.title || BUTTON_TYPES[button.type]?.label || button.type,
+        title_en: button.title_en || '',
         value: button.value || '',
         icon: button.icon || '',
         isActive: button.isActive !== undefined ? button.isActive : true,
@@ -53,6 +55,7 @@ export default function PageButtonsForm({ page, user }) {
           key: `${key}_${Date.now()}`,
           type: key,
           title: BUTTON_TYPES[key]?.label || key,
+          title_en: '',
           value: value,
           icon: '',
           isActive: true,
@@ -64,12 +67,13 @@ export default function PageButtonsForm({ page, user }) {
 
   const [buttons, setButtons] = useState(initializeButtons);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
 
-  async function save() {
+  async function save(formData) {
     try {
       // Send the array directly to the backend function
-      const result = await savePageButtons(buttons);
-      
+      const result = await savePageButtons(buttons, formData);
+
       if (result.success) {
         toast.success('Зачувано!');
       } else {
@@ -93,6 +97,7 @@ export default function PageButtonsForm({ page, user }) {
           key: customType,
           type: customType,
           title: 'Ново копче',
+          title_en: '',
           value: '',
           icon: '',
           isActive: true,
@@ -112,6 +117,7 @@ export default function PageButtonsForm({ page, user }) {
           key: `${buttonType}_${Date.now()}`,
           type: buttonType,
           title: BUTTON_TYPES[buttonType].label,
+          title_en: '',
           value: '',
           icon: '',
           isActive: true,
@@ -170,6 +176,7 @@ export default function PageButtonsForm({ page, user }) {
   return (
     <SectionBox>
       <form action={save}>
+        <input type="hidden" name="showEnglishTranslation" value={showEnglish} />
         <h2 className="text-2xl font-bold mb-4">Контакт</h2>
         <div className="mb-4">
           <button 
@@ -267,11 +274,19 @@ export default function PageButtonsForm({ page, user }) {
                       )}
                       <div>
                         <label className="block text-sm text-[#4b5563] mb-1">Наслов (за приказ)</label>
-                        <input 
-                          value={button.title} 
-                          onChange={ev => handleButtonChange(button.key, 'title', ev.target.value)} 
+                        <input
+                          value={button.title}
+                          onChange={ev => handleButtonChange(button.key, 'title', ev.target.value)}
                           type="text" placeholder="Наслов на копчето"
                         />
+                        {showEnglish && (
+                          <input
+                            value={button.title_en || ''}
+                            onChange={ev => handleButtonChange(button.key, 'title_en', ev.target.value)}
+                            type="text" placeholder="English title"
+                            className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                          />
+                        )}
                       </div>
                       {/* url input */}
                       <div>
@@ -305,6 +320,30 @@ export default function PageButtonsForm({ page, user }) {
             <p>Немате додадено копчиња. Кликнете на &quot;Внеси ново копче&quot; за да започнете.</p>
           </div>
         )}
+
+        {/* English Translation Toggle */}
+        <div className="border-t pt-4 mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="font-medium text-[#374151] flex items-center gap-1"><GB className="w-4 h-3" /> Додади Англиски превод</span>
+            <button
+              type="button"
+              onClick={() => setShowEnglish(!showEnglish)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                showEnglish ? 'bg-[#2563eb]' : 'bg-[#e5e7eb]'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  showEnglish ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          {showEnglish && (
+            <p className="text-sm text-[#4b5563] mb-4 flex items-center gap-1"><GB className="w-4 h-3" /> English fields will appear below each button title when enabled.</p>
+          )}
+        </div>
+
         <div className="max-w-[200px] mx-auto mt-6">
           <SubmitButton>
             <FontAwesomeIcon icon={faSave} />

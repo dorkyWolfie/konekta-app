@@ -5,6 +5,7 @@ import SectionBox from "../layout/sectionBox";
 import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faComment, faGripLines, faFile, faFilePdf, faImage, faPlus, faSave, faTrash, faDownload, faEye } from "@fortawesome/free-solid-svg-icons";
+import { GB } from 'country-flag-icons/react/3x2';
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { upload } from "@/libs/upload";
@@ -15,10 +16,11 @@ import { useRouter } from 'next/navigation';
 export default function PageFilesForm({page, user}) {
   const router = useRouter();
   const [files, setFiles] = useState(page.files || []);
+  const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
 
-  async function save() {
+  async function save(formData) {
     try {
-      const result = await savePageFiles(files);
+      const result = await savePageFiles(files, formData);
 
       if (result.success) {
         toast.success('Зачувано!');
@@ -35,8 +37,10 @@ export default function PageFilesForm({page, user}) {
     setFiles(prev => {
       return [...prev, {
         key: Date.now().toString(),
-        title: '', 
-        description: '', 
+        title: '',
+        title_en: '',
+        description: '',
+        description_en: '',
         url: '',
         name: '',
         type: '',
@@ -167,6 +171,7 @@ export default function PageFilesForm({page, user}) {
   return (
     <SectionBox>
       <form action={save}>
+        <input type="hidden" name="showEnglishTranslation" value={showEnglish} />
         <h2 className="text-2xl font-bold mb-4">Датотеки</h2>
         <button 
           onClick={addNewFile} 
@@ -257,19 +262,37 @@ export default function PageFilesForm({page, user}) {
                 </div>
                 <div className="grow">
                   <label className="input-label">Наслов</label>
-                  <input 
-                    value={f.title} 
-                    onChange={ev => handleFileChange(f.key, 'title', ev)} 
-                    type="text" 
-                    placeholder="Наслов на датотеката" 
+                  <input
+                    value={f.title}
+                    onChange={ev => handleFileChange(f.key, 'title', ev)}
+                    type="text"
+                    placeholder="Наслов на датотеката"
                   />
+                  {showEnglish && (
+                    <input
+                      value={f.title_en || ''}
+                      onChange={ev => handleFileChange(f.key, 'title_en', ev)}
+                      type="text"
+                      placeholder="English title"
+                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                    />
+                  )}
                   <label className="input-label">Опис</label>
-                  <textarea 
-                    value={f.description} 
-                    onChange={ev => handleFileChange(f.key, 'description', ev)} 
+                  <textarea
+                    value={f.description}
+                    onChange={ev => handleFileChange(f.key, 'description', ev)}
                     placeholder="Опис на датотеката (не е задолжително)"
                     rows="3"
                   />
+                  {showEnglish && (
+                    <textarea
+                      value={f.description_en || ''}
+                      onChange={ev => handleFileChange(f.key, 'description_en', ev)}
+                      placeholder="English description (optional)"
+                      rows="3"
+                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                    />
+                  )}
                 </div>
               </div>
             ))}
@@ -281,6 +304,30 @@ export default function PageFilesForm({page, user}) {
             <p>Немате прикачено датотеки. Кликнете на &quot;Внеси нова датотека&quot; за да започнете.</p>
           </div>
         )}
+
+        {/* English Translation Toggle */}
+        <div className="border-t pt-4 mt-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="font-medium text-[#374151] flex items-center gap-1"><GB className="w-4 h-3" /> Додади Англиски превод</span>
+            <button
+              type="button"
+              onClick={() => setShowEnglish(!showEnglish)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                showEnglish ? 'bg-[#2563eb]' : 'bg-[#e5e7eb]'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  showEnglish ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          {showEnglish && (
+            <p className="text-sm text-[#4b5563] mb-4 flex items-center gap-1"><GB className="w-4 h-3" /> English fields will appear below each file title and description when enabled.</p>
+          )}
+        </div>
+
         <div className="max-w-[200px] mx-auto mt-4">
           <SubmitButton>
             <FontAwesomeIcon icon={faSave} />

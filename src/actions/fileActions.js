@@ -7,7 +7,9 @@ import { page } from '@/models/page';
 const FILE_SCHEMA = {
   key: { type: String, required: true },
   title: { maxLength: 100, required: true },
+  title_en: { maxLength: 100, required: false },
   description: { maxLength: 500, required: false },
+  description_en: { maxLength: 500, required: false },
   url: { maxLength: 1000, required: true },
   name: { maxLength: 255, required: true },
   type: { maxLength: 200, required: true },
@@ -90,12 +92,27 @@ function validateFilesData(files) {
       fileErrors.push(`File ${index + 1}: Description exceeds maximum length of ${FILE_SCHEMA.description.maxLength} characters`);
     }
 
+    // Check optional English fields
+    if (file.title_en && typeof file.title_en !== 'string') {
+      fileErrors.push(`File ${index + 1}: English title must be a string`);
+    } else if (file.title_en && file.title_en.trim().length > FILE_SCHEMA.title_en.maxLength) {
+      fileErrors.push(`File ${index + 1}: English title exceeds maximum length of ${FILE_SCHEMA.title_en.maxLength} characters`);
+    }
+
+    if (file.description_en && typeof file.description_en !== 'string') {
+      fileErrors.push(`File ${index + 1}: English description must be a string`);
+    } else if (file.description_en && file.description_en.trim().length > FILE_SCHEMA.description_en.maxLength) {
+      fileErrors.push(`File ${index + 1}: English description exceeds maximum length of ${FILE_SCHEMA.description_en.maxLength} characters`);
+    }
+
     errors.push(...fileErrors);
 
     return {
       key: file.key?.trim() || '',
       title: file.title?.trim() || '',
+      title_en: file.title_en?.trim() || '',
       description: file.description?.trim() || '',
+      description_en: file.description_en?.trim() || '',
       url: file.url?.trim() || '',
       name: file.name?.trim() || '',
       type: file.type?.trim().toLowerCase() || '',
@@ -124,7 +141,7 @@ function sanitizeFileName(name) {
     .slice(0, FILE_SCHEMA.name.maxLength);
 }
 
-export async function savePageFiles(files) {
+export async function savePageFiles(files, formData) {
   try {
     // Connect to database with proper error handling
     if (mongoose.connection.readyState === 0) {
@@ -143,6 +160,7 @@ export async function savePageFiles(files) {
       throw new Error(`Validation failed: ${errors.join(', ')}`);
     }
 
+
     // Sanitize email for database query
     const userEmail = session.user.email.trim().toLowerCase();
 
@@ -152,16 +170,25 @@ export async function savePageFiles(files) {
       name: sanitizeFileName(file.name)
     }));
 
+    // Prepare update data
+    const updateData = {
+      files: processedFiles,
+      updatedAt: new Date()
+    };
+
+    // Handle showEnglishTranslation if provided
+    if (formData && formData.has('showEnglishTranslation')) {
+      const showEnglishValue = formData.get('showEnglishTranslation');
+      updateData.showEnglishTranslation = showEnglishValue === 'true' || showEnglishValue === true;
+    }
+
     // Update with proper error handling
     const result = await page.updateOne(
       { owner: userEmail },
-      { 
-        $set: { 
-          files: processedFiles,
-          updatedAt: new Date()
-        } 
+      {
+        $set: updateData
       },
-      { 
+      {
         runValidators: true,
         upsert: false // Don't create if doesn't exist
       }
