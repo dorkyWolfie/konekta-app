@@ -13,6 +13,7 @@ function validateInput(key, value) {
     location: 100,
     bio: 500,
     bgColor: 7, // #ffffff
+    bgColorPage: 7,
     displayName_en: 100,
     company_en: 100,
     position_en: 100,
@@ -26,6 +27,10 @@ function validateInput(key, value) {
 
   // Validate color format
   if (key === 'bgColor' && !/^#[0-9A-F]{6}$/i.test(value)) {
+    return { isValid: false };
+  }
+
+  if (key === 'bgColorPage' && !/^#[0-9A-F]{6}$/i.test(value)) {
     return { isValid: false };
   }
 
@@ -65,7 +70,7 @@ export async function savePageSettings(formData) {
     }
 
     const dataKeys = [
-      'displayName', 'company', 'position', 'location', 'bio', 'bgType', 'bgColor', 'bgImage',
+      'displayName', 'company', 'position', 'location', 'bio', 'bgType', 'bgColorPage', 'bgColor', 'bgImage',
       'displayName_en', 'company_en', 'position_en', 'location_en', 'bio_en', 'showEnglishTranslation'
     ];
     const dataToUpdate = {};

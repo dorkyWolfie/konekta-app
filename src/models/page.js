@@ -10,6 +10,7 @@ const PageSchema = new Schema({
     bio: {type: String, default: ''},
     bgType: {type: String, default: 'color'},
     bgColor: {type: String, default: '#d1d5db'},
+    bgColorPage: {type: String, default: '#F0F9FF'},
     bgImage: {type: String, default: ''},
     buttons: {type: Object, default: []},
     links: {type: Object, default: []},

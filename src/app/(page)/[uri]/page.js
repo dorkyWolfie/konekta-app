@@ -137,7 +137,7 @@ export default async function UserPage({params, searchParams}) {
       {/* Language Switcher */}
       <LanguageSwitcher uri={uri} currentLang={lang} page={Page} />
       {/* bg color overlay on entire page */}
-      <div className="w-full h-screen fixed z-[-10] absolute top-0 bg-[#f9fafb]" style={{background: Page.bgColor, opacity: .2}}></div>
+      <div className="w-full h-screen fixed z-[-10] absolute top-0 bg-[#f9fafb]" style={{background: Page.bgColorPage}}></div>
       {/* bg color or image set from account above the avatar image */}
       <div 
         className="h-80 max-sm:h-60 bg-[#dbeafe] bg-cover bg-center"
@@ -201,7 +201,7 @@ export default async function UserPage({params, searchParams}) {
               ping={process.env.URL+'/api/click?url='+btoa(link.url)+'&page='+Page.uri}
               target="_blank" 
               href={link.url} 
-              className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
+              className="bg-white/75 shadow-sm p-2 flex gap-4 items-center hover:bg-white/90 transition-colors" >
               <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square !p-2 w-15 h-15 flex justify-center items-center">
                 {link.icon && (
                   <Image src={link.icon} alt={'icon'} width={256} height={256} className="w-full h-full object-contain" />
@@ -225,7 +225,7 @@ export default async function UserPage({params, searchParams}) {
               ping={process.env.URL+'/api/click?url='+btoa(file.url)+'&page='+Page.uri}
               target="_blank" 
               href={file.url} 
-              className="bg-white/75 shadow-sm p-2 flex gap-4 items-center" >
+              className="bg-white/75 shadow-sm p-2 flex gap-4 items-center hover:bg-white/90 transition-colors" >
               <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 !p-2 flex justify-center items-center">
                 {file.url && file.type === 'application/pdf' && (
                   <FontAwesomeIcon icon={faFilePdf} width={50} height={50} className="text-xl object-cover" />

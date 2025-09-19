@@ -30,6 +30,7 @@ export default function PageSettingsForm({page, user}) {
   const router = useRouter();
   const [bgType, setBgType] = useState(page.bgType);
   const [bgColor, setBgColor] = useState(page.bgColor);
+  const [bgColorPage, setBgColorPage] = useState(page.bgColorPage);
   const [bgImage, setBgImage] = useState(page.bgImage);
   const [avatar, setAvatar] = useState(user?.image);
   const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
@@ -59,6 +60,7 @@ export default function PageSettingsForm({page, user}) {
 
   return (
     <div>
+      <div className="w-full h-screen fixed z-[-10] absolute top-0 bg-[#f9fafb]" style={{background: bgColorPage}}></div>
       <SectionBox>
         <form action={saveBaseSettings}>
           <div 
@@ -80,7 +82,7 @@ export default function PageSettingsForm({page, user}) {
               {bgType === 'color' && (
                 <div className="bg-[#f3f4f6] shadow text-[#374151] p-2 mt-2">
                   <div className="flex gap-2 justify-center hover:text-[#2563eb]">
-                    <span>Одбери боја за позадината</span>
+                    <span>Одбери боја за насловна</span>
                     <FontAwesomeIcon icon={faArrowRight} className="self-center" />
                     <input 
                       type="color" name="bgColor" 
@@ -101,6 +103,16 @@ export default function PageSettingsForm({page, user}) {
                   </label>
                 </div>
               )}
+              <div className="bg-[#f3f4f6] shadow text-[#374151] p-2 mt-2">
+                <div className="flex gap-2 justify-center hover:text-[#2563eb]">
+                  <span>Одбери боја за позадината</span>
+                  <FontAwesomeIcon icon={faArrowRight} className="self-center" />
+                  <input 
+                    type="color" name="bgColorPage" 
+                    onChange={ev => setBgColorPage(ev.target.value)}
+                    defaultValue={page.bgColorPage} className="cursor-pointer" />
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex justify-center -mb-10">
