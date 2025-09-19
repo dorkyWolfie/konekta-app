@@ -60,7 +60,6 @@ export default function PageSettingsForm({page, user}) {
 
   return (
     <div>
-      <div className="w-full h-screen fixed z-[-10] absolute top-0 bg-[#f9fafb]" style={{background: bgColorPage}}></div>
       <SectionBox>
         <form action={saveBaseSettings}>
           <div 
