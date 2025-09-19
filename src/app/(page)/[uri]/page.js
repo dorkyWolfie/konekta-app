@@ -242,7 +242,7 @@ export default async function UserPage({params, searchParams}) {
         </div>
       </div>
       <div className="relative">
-        <SaveContact uri={Page.uri} className="button-1 shadow text-sm fixed absolute z-10 bottom-2 left-[50%] transform -translate-x-[50%]" />
+        <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow text-sm fixed absolute z-10 bottom-2 left-[50%] transform -translate-x-[50%]" />
       </div>
     </main>
   )

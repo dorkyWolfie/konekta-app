@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import { NextResponse } from 'next/server';
 import { page } from '@/models/page';
 import { user } from '@/models/user';
+import { getLocalizedContent } from '@/lib/i18n';
 
 export function cyrillicToLatin(text) {
   const map = {
@@ -68,6 +69,7 @@ function getButtonValue(buttons, buttonType) {
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const uri = searchParams.get('uri');
+  const lang = searchParams.get('lang') === 'en' ? 'en' : 'mk';
 
   if (!uri) {
     return new NextResponse('Missing uri parameter', { status: 400 });
@@ -81,17 +83,22 @@ export async function GET(req) {
     return new NextResponse('Page not found', { status: 404 });
   }
 
-  const displayNameLatin = cyrillicToLatin(Page.displayName || '');
-  const companyLatin = cyrillicToLatin(Page.company || '');
-  const positionLatin = cyrillicToLatin(Page.position || '');
+  // Get localized content based on language selection
+  const content = getLocalizedContent(Page, lang);
 
-  // Get buttons - check both new and legacy formats
-  let buttons = [];
-  if (Page.buttons && Array.isArray(Page.buttons)) {
-    buttons = Page.buttons;
-  } else if (Page.buttonsArray && Array.isArray(Page.buttonsArray)) {
-    buttons = Page.buttonsArray;
-  }
+  // For English, use content as-is if available, for Macedonian convert to Latin
+  const displayName = lang === 'en' && content.displayName !== Page.displayName
+    ? content.displayName
+    : cyrillicToLatin(content.displayName || '');
+  const company = lang === 'en' && content.company !== Page.company
+    ? content.company
+    : cyrillicToLatin(content.company || '');
+  const position = lang === 'en' && content.position !== Page.position
+    ? content.position
+    : cyrillicToLatin(content.position || '');
+
+  // Use localized buttons from content
+  const buttons = content.buttons || [];
 
   // Extract only phone and email from buttons
   const emailValue = getButtonValue(buttons, 'email');
@@ -100,10 +107,10 @@ export async function GET(req) {
   const lines = [
     'BEGIN:VCARD',
     'VERSION:3.0',
-    `N:${displayNameLatin.split(' ').reverse().join(';')}`,
-    `FN:${displayNameLatin}`,
-    companyLatin ? `ORG:${companyLatin}` : '',
-    positionLatin ? `TITLE:${positionLatin}` : '',
+    `N:${displayName.split(' ').reverse().join(';')}`,
+    `FN:${displayName}`,
+    company ? `ORG:${company}` : '',
+    position ? `TITLE:${position}` : '',
     phoneValue ? `TEL;TYPE=CELL:${phoneValue}` : '',
     emailValue ? `EMAIL:${emailValue}` : '',
     `URL:${process.env.NEXTAUTH_URL}/${uri}`,
@@ -127,7 +134,7 @@ export async function GET(req) {
     status: 200,
     headers: {
       'Content-Type': 'text/vcard; charset=utf-8',
-      'Content-Disposition': `attachment; filename="${displayNameLatin}.vcf"`,
+      'Content-Disposition': `attachment; filename="${displayName}.vcf"`,
     },
   });
 }
