@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { MK } from 'country-flag-icons/react/3x2';
-import { GB } from 'country-flag-icons/react/3x2';
+import { MK, GB } from 'country-flag-icons/react/3x2';
 
 export default function LanguageSwitcher({ uri, currentLang = 'mk', page }) {
   // Check if English content exists
@@ -24,7 +23,7 @@ export default function LanguageSwitcher({ uri, currentLang = 'mk', page }) {
     <div className="fixed top-4 right-4 z-20 flex gap-2">
       <Link
         href={`/${uri}`}
-        className={`px-2 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1 ${
+        className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${
           currentLang === 'mk'
             ? 'bg-[#2563eb] text-white'
             : 'bg-white/75 text-[#374151] hover:bg-white/90'
@@ -34,7 +33,7 @@ export default function LanguageSwitcher({ uri, currentLang = 'mk', page }) {
       </Link>
       <Link
         href={`/${uri}?lang=en`}
-        className={`px-2 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1 ${
+        className={`px-2 py-1 text-xs font-medium transition-colors flex items-center gap-1 ${
           currentLang === 'en'
             ? 'bg-[#2563eb] text-white'
             : 'bg-white/75 text-[#374151] hover:bg-white/90'
