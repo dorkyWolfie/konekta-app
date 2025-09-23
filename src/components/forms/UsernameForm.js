@@ -35,7 +35,7 @@ export default function UsernameForm({desiredUsername}) {
             Ова корисничко име е зафатено.
           </div>
         )}
-        <button type="submit" className="bg-[#3b82f6] text-white py-2 px-4 block mx-auto w-full hover:bg-transparent hover:text-[#2563eb] hover:border-2 border-[#3b82f6]">Зачувај</button>
+        <button type="submit" className="bg-[#3b82f6] text-white py-2 px-4 block mx-auto w-full border-2 hover:bg-transparent hover:text-[#2563eb] hover:border-2 border-[#3b82f6]">Зачувај</button>
       </div>
     </form>
   )
