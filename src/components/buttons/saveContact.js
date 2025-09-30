@@ -24,10 +24,12 @@ export default function SaveContact({ uri, lang = 'mk', className='' }) {
     document.body.removeChild(link);
   };
 
+  const buttonText = lang === 'en' ? 'Save Contact' : 'Превземи контакт';
+
   return (
     <button onClick={downloadVCard} className={className}>
       <FontAwesomeIcon icon={faSave} className="w-6 h-6 pr-2" />
-      <span>Превземи контакт</span>
+      <span>{buttonText}</span>
     </button>
   );
 }
