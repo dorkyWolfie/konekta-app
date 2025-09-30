@@ -47,7 +47,7 @@ export default async function AppTemplate({ children, ...rest }) {
   return (
     <div className="overflow-x-hidden">
       <Toaster />
-      <main className="flex min-h-screen " style={{background: page.bgColorPage}}>
+      <main className="flex min-h-screen " style={{background: Page.bgColorPage}}>
         <aside id="sidebar" className="bg-white p-6 relative w-49 min-w-49 md:block hidden">
           <button onClick={closeAside} className="md:hidden fixed top-8 left-42 z-10 bg-[#3b82f6] text-white py-2 px-3 shadow-md">
             <FontAwesomeIcon icon={faClose} size="lg" />

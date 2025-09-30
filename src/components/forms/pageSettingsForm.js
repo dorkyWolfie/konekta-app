@@ -5,7 +5,7 @@ import SubmitButton from "@/components/buttons/submitButton";
 import SectionBox from "@/components/layout/sectionBox";
 import { page } from "@/models/page";
 import { savePageSettings } from "@/actions/pageActions";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { upload } from "@/libs/upload";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
@@ -34,6 +34,14 @@ export default function PageSettingsForm({page, user}) {
   const [bgImage, setBgImage] = useState(page.bgImage);
   const [avatar, setAvatar] = useState(user?.image);
   const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
+
+  // Update page background in real-time
+  useEffect(() => {
+    const mainElement = document.querySelector('main');
+    if (mainElement) {
+      mainElement.style.background = bgColorPage;
+    }
+  }, [bgColorPage]);
 
   async function saveBaseSettings(formData) {
     const result = await savePageSettings(formData);
