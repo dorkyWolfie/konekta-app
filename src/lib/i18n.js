@@ -52,3 +52,35 @@ export const errorMessages = {
     activateProfile: "If you want to activate your profile"
   }
 };
+
+// Contact messages by language
+export const contactMessages = {
+  mk: {
+    success: "Контактот е успешно испратен!",
+    error: "Грешка при праќање!",
+    h1: "Размени контакт",
+    description: "Прати ги твоите информации на",
+    firstName: "Име*",
+    lastName: "Презиме*",
+    company: "Фирма",
+    position: "Позиција",
+    email: "Е-пошта*",
+    phone: "Телефон",
+    save: "Зачувај",
+    buttonText: "Размени контакт"
+  },
+  en: {
+    success: "Contact successfully sent!",
+    error: "Error sending contact!",
+    h1: "Exchange Contact",
+    description: "Send your information to",
+    firstName: "First Name*",
+    lastName: "Last Name*",
+    company: "Company",
+    position: "Position",
+    email: "Email*",
+    phone: "Phone",
+    save: "Save",
+    buttonText: "Exchange Contact"
+  }
+}

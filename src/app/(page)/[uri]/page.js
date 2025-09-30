@@ -11,6 +11,7 @@ import { getLocalizedContent, errorMessages } from "@/lib/i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFilePdf, faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faFacebook, faGithub, faInstagram, faTelegram, faTiktok, faWhatsapp, faYoutube, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import ExchangeContactButton from "@/components/buttons/exchangeContactButton";
 
 export const icons = {
   email: faEnvelope,
@@ -100,8 +101,8 @@ export default async function UserPage({params, searchParams}) {
 
   await mongoose.connect(process.env.MONGO_URI);
 
-  const Page = await page.findOne({uri});
-  const User = await user.findOne({email: Page?.owner});
+  const Page = await page.findOne({uri}).lean();
+  const User = await user.findOne({email: Page?.owner}).lean();
 
   await event.create({uri:uri, page:uri, type:"view"});
 
@@ -241,8 +242,9 @@ export default async function UserPage({params, searchParams}) {
           ))}
         </div>
       </div>
-      <div className="relative">
-        <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow text-sm fixed absolute z-10 bottom-2 left-[50%] transform -translate-x-[50%]" />
+      <div className="text-sm fixed z-10 bottom-2 left-[50%] transform -translate-x-[50%] flex flex-row gap-2 flex-wrap items-center justify-center">
+        <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow" />
+        <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow" />
       </div>
     </main>
   )

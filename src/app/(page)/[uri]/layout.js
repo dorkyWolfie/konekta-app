@@ -1,6 +1,7 @@
 import "../../globals.css";
 import mongoose from "mongoose";
 import { page } from "@/models/page";
+import { Toaster } from "react-hot-toast";
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -51,7 +52,8 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
       </head>
       <body>
-          {children}
+        <Toaster />
+        {children}
       </body>
     </html>
   );

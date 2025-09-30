@@ -3,7 +3,7 @@ import Link from "next/link";
 import LogoutButton from "@/components/buttons/logoutButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { faFileLines, faAddressCard } from "@fortawesome/free-regular-svg-icons";
+import { faFileLines, faAddressCard, faAddressBook } from "@fortawesome/free-regular-svg-icons";
 import { usePathname } from "next/navigation";
 
 export default function AppSidebar() {
@@ -26,6 +26,14 @@ export default function AppSidebar() {
           icon={faChartLine} 
           className="w-6 h-6" />
         <span>Аналитика</span>
+      </Link>
+      <Link href={'/contacts'} 
+      className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]" 
+        + (path === '/contacts' ? '!text-[#3b82f6] font-bold items-center' : '')} >
+        <FontAwesomeIcon 
+          icon={faAddressBook} 
+          className="w-6 h-6" />
+        <span>Контакти</span>
       </Link>
       <LogoutButton 
         iconLeft={true}
