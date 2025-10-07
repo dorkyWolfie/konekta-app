@@ -4,7 +4,7 @@ import { page } from "@/models/page";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { saveExchangeContact } from "@/actions/contactActions";
 import { getLocalizedContent, contactMessages } from "@/lib/i18n";
 
@@ -60,7 +60,7 @@ export default function ExchangeContactForm({page, user, lang = 'mk'}) {
         </label>
         <div className="max-w-[200px] mx-auto mt-4">
           <SubmitButton>
-            <FontAwesomeIcon icon={faSave} />
+            <FontAwesomeIcon icon={faPaperPlane} />
             <span>{messages.save}</span>
           </SubmitButton>
         </div>

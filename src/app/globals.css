@@ -122,11 +122,11 @@ footer {
 
 /* ---- BUTTONS START ---- */
 .button-1 {
-  @apply bg-[#3b82f6] text-white font-[700] py-2 px-4 hover:bg-[#1d4ed8] transition-all cursor-pointer;
+  @apply bg-[#3b82f6] text-white font-[700] py-2 px-4 hover:bg-[#1d4ed8] transition-all !cursor-pointer;
 }
 
 .button-2 {
-  @apply border-2 border-[#3b82f6] text-[#3b82f6] font-[700] py-2 px-4 hover:bg-[#3b82f6] hover:text-white transition-all cursor-pointer;
+  @apply border-2 border-[#3b82f6] text-[#3b82f6] font-[700] py-2 px-4 hover:bg-[#3b82f6] hover:text-white transition-all !cursor-pointer;
 }
 /* ---- BUTTONS END ---- */
 
