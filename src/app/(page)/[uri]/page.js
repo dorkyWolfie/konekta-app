@@ -243,10 +243,10 @@ export default async function UserPage({params, searchParams}) {
           ))}
         </div>
       </div>
-      <div className="text-sm fixed z-10 bottom-2 left-[50%] transform -translate-x-[50%] flex flex-row gap-2 flex-wrap items-center justify-center">
-        <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow" />
-        <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow" />
-        <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow cursor-pointer" />
+      <div className="contactDiv">
+        <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow mobButton" />
+        <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow mobButton" />
+        <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow cursor-pointer mobButton" />
       </div>
     </main>
   )
