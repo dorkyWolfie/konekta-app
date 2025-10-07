@@ -66,7 +66,7 @@ export const contactMessages = {
     position: "Позиција",
     email: "Е-пошта*",
     phone: "Телефон",
-    save: "Зачувај",
+    save: "Испрати контакт",
     buttonText: "Размени контакт"
   },
   en: {
@@ -80,7 +80,33 @@ export const contactMessages = {
     position: "Position",
     email: "Email*",
     phone: "Phone",
-    save: "Save",
+    save: "Send Contact",
     buttonText: "Exchange Contact"
+  }
+}
+
+// Share contact messages by language
+export const shareContactMessages = {
+  mk: {
+    buttonText: "Сподели контакт",
+    h1: "Сподели контакт",
+    description: "Скенирај го QR кодот или искористи ги опциите подолу",
+    copyUrl: "Копирај го линкот",
+    urlCopied: "Линкот е копиран!",
+    share: "Сподели",
+    shareTitle: "Погледнете го мојот Конекта профил",
+    copyError: "Грешка при копирање",
+    shareError: "Грешка при споделување"
+  },
+  en: {
+    buttonText: "Share Contact",
+    h1: "Share Contact",
+    description: "Scan the QR code or use the options below",
+    copyUrl: "Copy URL",
+    urlCopied: "URL copied!",
+    share: "Share",
+    shareTitle: "Check out my Konekta profile",
+    copyError: "Error copying URL",
+    shareError: "Error sharing"
   }
 }

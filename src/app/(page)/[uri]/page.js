@@ -4,6 +4,8 @@ import Link from "next/link";
 import SaveContact from "@/components/buttons/saveContact";
 import SectionBox from "@/components/layout/sectionBox";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import ExchangeContactButton from "@/components/buttons/exchangeContactButton";
+import ShareContactButton from "@/components/buttons/shareContactButton";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { event } from "@/models/event";
@@ -11,7 +13,6 @@ import { getLocalizedContent, errorMessages } from "@/lib/i18n";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFilePdf, faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faFacebook, faGithub, faInstagram, faTelegram, faTiktok, faWhatsapp, faYoutube, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
-import ExchangeContactButton from "@/components/buttons/exchangeContactButton";
 
 export const icons = {
   email: faEnvelope,
@@ -157,14 +158,14 @@ export default async function UserPage({params, searchParams}) {
           <h3 className="flex flex-row items-center gap-2 mt-1 text-[#374151] text-sm">
             {content.company && (
               <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm">
-                <FontAwesomeIcon icon={faBuilding} width={10} />
+                <FontAwesomeIcon icon={faBuilding} className="w-3 h-3" />
                 {content.company}
                 <span>•</span>
               </span>
             )}
             {content.position && (
               <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm">
-                <FontAwesomeIcon icon={faBriefcase} width={10} />
+                <FontAwesomeIcon icon={faBriefcase} className="pt-[1px] w-3 h-3" />
                 {content.position}
               </span>
             )}
@@ -245,6 +246,7 @@ export default async function UserPage({params, searchParams}) {
       <div className="text-sm fixed z-10 bottom-2 left-[50%] transform -translate-x-[50%] flex flex-row gap-2 flex-wrap items-center justify-center">
         <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow" />
         <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow" />
+        <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow cursor-pointer" />
       </div>
     </main>
   )
