@@ -1,5 +1,5 @@
 'use client';
-import { faSave } from "@fortawesome/free-solid-svg-icons";
+import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function SaveContact({ uri, lang = 'mk', className='' }) {
@@ -28,7 +28,7 @@ export default function SaveContact({ uri, lang = 'mk', className='' }) {
 
   return (
     <button onClick={downloadVCard} className={className}>
-      <FontAwesomeIcon icon={faSave} className="w-6 h-6 pr-2" />
+      <FontAwesomeIcon icon={faCloudArrowDown} className="w-6 h-6 pr-2" />
       <span>{buttonText}</span>
     </button>
   );
