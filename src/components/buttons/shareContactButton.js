@@ -21,7 +21,7 @@ export default function ShareContactButton({page, user, lang = 'mk', ...props}) 
       </div>
       {showShareContactForm && createPortal(
         <PopUp>
-          <button onClick={() => setShowShareContactForm(false)} className="absolute top-2 right-3 text-lg font-bold" >
+          <button onClick={() => setShowShareContactForm(false)} className="!cursor-pointer" >
             <FontAwesomeIcon icon={faClose} className="w-5 h-5 text-2xl hover:text-[#3b82f6]" />
           </button>
           <ShareContactForm page={page} user={user} lang={lang} />
