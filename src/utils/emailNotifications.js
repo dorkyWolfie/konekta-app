@@ -85,6 +85,17 @@ export async function welcomeEmail({ email, name, provider }) {
           padding-top: 20px;
           border-top: 1px solid #eee;
         }
+        .footer a {
+          background: #eee;
+          color: #2563eb;
+          text-decoration: none;
+          padding: 14px 15px;
+          border-radius: 30px;
+        }
+        .footer a:hover {
+          background: #2563eb;
+          color: #eee;
+        }
       </style>
     </head>
     <body>
@@ -132,6 +143,8 @@ export async function welcomeEmail({ email, name, provider }) {
       </div>
       <div class="footer">
         <div>
+          <a href="https://konekta.mk"><i class="fa-solid fa-globe"></i></a>
+          <a href="https://app.konekta.mk"><i class="fa-solid fa-user"></i></a>
           <a href="https://www.facebook.com/profile.php?id=61578597457088"><i class="fa-brands fa-facebook"></i></a>
           <a href="https://www.instagram.com/konektamk"><i class="fa-brands fa-instagram"></i></a>
           <a href="mailto:info@konekta.mk"><i class="fa-solid fa-envelope"></i></a>
