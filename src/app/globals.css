@@ -228,7 +228,7 @@ textarea {
 
 /* ---- URI - CONTACT BUTTONS START ---- */
 .contactDiv {
-  @apply w-full px-4 text-sm fixed z-10 bottom-2 left-[50%] transform -translate-x-[50%] flex flex-row gap-2 items-center justify-center;
+  @apply w-full px-4 fixed z-10 bottom-2 left-[50%] transform -translate-x-[50%] flex flex-row gap-2 items-center justify-center;
 }
 
 @media screen and (max-width: 600px) {
@@ -245,7 +245,7 @@ textarea {
   }
 
   .mobButton svg {
-    @apply p-0 w-5 h-5 text-2xl;
+    @apply p-0 w-7 h-7 text-2xl;
   }
 
   .mobButton span {
