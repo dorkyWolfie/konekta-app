@@ -35,11 +35,11 @@ export default function ExchangeContactForm({page, user, lang = 'mk'}) {
         <div className="flex flex-row gap-8 w-full">
           <label className="input-label w-full" htmlFor="contactName">
             <span>{messages.firstName}</span>
-            <input type="text" id="contactName" name="contactName" placeholder={messages.firstName} required />
+            <input type="text" id="contactName" name="contactName" placeholder={messages.firstNamePlaceholder} required />
           </label>
           <label className="input-label w-full" htmlFor="contactLastName">
             <span>{messages.lastName}</span>
-            <input type="text" id="contactLastName" name="contactLastName" placeholder={messages.lastName} required />
+            <input type="text" id="contactLastName" name="contactLastName" placeholder={messages.lastNamePlaceholder} required />
           </label>
         </div>
         <label className="input-label w-full" htmlFor="contactCompany">
@@ -52,7 +52,7 @@ export default function ExchangeContactForm({page, user, lang = 'mk'}) {
         </label>
         <label className="input-label w-full" htmlFor="contactEmail">
           <span>{messages.email}</span>
-          <input type="text" id="contactEmail" name="contactEmail" placeholder={messages.email} required />
+          <input type="text" id="contactEmail" name="contactEmail" placeholder={messages.emailPlaceholder} required />
         </label>
         <label className="input-label w-full" htmlFor="contactPhone">
           <span>{messages.phone}</span>

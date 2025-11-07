@@ -61,10 +61,13 @@ export const contactMessages = {
     h1: "Размени контакт",
     description: "Прати ги твоите информации на",
     firstName: "Име*",
+    firstNamePlaceholder: "Име* (задолжително)",
     lastName: "Презиме*",
+    lastNamePlaceholder: "Презиме* (задолжително)",
     company: "Фирма",
     position: "Позиција",
     email: "Е-пошта*",
+    emailPlaceholder: "Е-пошта* (задолжително)",
     phone: "Телефон",
     save: "Испрати контакт",
     buttonText: "Размени контакт"
