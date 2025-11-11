@@ -6,8 +6,10 @@ const UserSchema = new Schema({
   password: String,
   image: String,
   emailVerified: Date,
-  subscriptionStatus: { type: String, enum: ['basic', 'pro'], default: 'basic'},
+  subscriptionStatus: { type: String, enum: ['basic', 'pro'], default: 'pro'},
   subscriptionExpiresAt: Date,
+  trialEndsAt: Date,
+  isOnTrial: { type: Boolean, default: false },
   provider: { type: String, enum: ['google', 'credentials'], required: true, default: 'credentials' },
   // Google-specific fields
   googleId: String,
@@ -21,6 +23,7 @@ const UserSchema = new Schema({
 // Index for faster lookups
 UserSchema.index({ email: 1 });
 UserSchema.index({ googleId: 1 });
+UserSchema.index({ trialEndsAt: 1 });
 
 // Pre-save middleware to set isNewUser to false after first save
 UserSchema.pre('save', function(next) {

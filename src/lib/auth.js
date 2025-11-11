@@ -71,14 +71,20 @@ export const authOptions = {
           });
           
           if (!existingUser) {
-            // Create new Google user
+            // Calculate trial end date (7 days from now)
+            const trialEndsAt = new Date();
+            trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
+            // Create new Google user with trial
             const dbUser = await User.create({
               name: user.name,
               email: user.email.toLowerCase(),
               image: user.image,
               provider: 'google',
               googleId: account.providerAccountId,
-              subscriptionStatus: 'basic',
+              subscriptionStatus: 'pro', // Start with pro
+              isOnTrial: true, // Mark as trial user
+              trialEndsAt: trialEndsAt, // Set trial expiration
               lastLoginAt: new Date(),
               isNewUser: true
             });
@@ -89,7 +95,9 @@ export const authOptions = {
               provider: 'google',
               timestamp: new Date(),
               isNewUser: true,
-              subscriptionStatus: dbUser.subscriptionStatus
+              subscriptionStatus: dbUser.subscriptionStatus,
+              isOnTrial: dbUser.isOnTrial, 
+              trialEndsAt: dbUser.trialEndsAt
             });
 
             await welcomeEmail({
@@ -133,12 +141,25 @@ export const authOptions = {
           await mongoose.connect(process.env.MONGO_URI);
           const dbUser = await User.findOne({ 
             email: token.email.toLowerCase() 
-          }).select('name image subscriptionStatus');
+          }).select('name image subscriptionStatus isOnTrial trialEndsAt');
           
           if (dbUser) {
             token.image = dbUser.image;
             token.name = dbUser.name;
-            token.subscriptionStatus = dbUser.subscriptionStatus;
+            
+            // Check if trial has expired and update if needed
+            if (dbUser.isOnTrial && dbUser.trialEndsAt && new Date() > dbUser.trialEndsAt) {
+              await User.findByIdAndUpdate(dbUser._id, {
+                subscriptionStatus: 'basic',
+                isOnTrial: false
+              });
+              token.subscriptionStatus = 'basic';
+              token.isOnTrial = false;
+            } else {
+              token.subscriptionStatus = dbUser.subscriptionStatus;
+              token.isOnTrial = dbUser.isOnTrial;
+              token.trialEndsAt = dbUser.trialEndsAt;
+            }
           }
         } catch (error) {
           console.error("Error fetching user data in JWT callback:", error);
@@ -156,19 +177,13 @@ export const authOptions = {
         session.user.name = token.name;
         session.user.image = token.image;
         session.user.subscriptionStatus = token.subscriptionStatus;
+        session.user.isOnTrial = token.isOnTrial;
+        session.user.trialEndsAt = token.trialEndsAt;
       }
       return session;
     },
   },
-
-  // events: {
-  //   async signIn({ user, account, profile, isNewUser }) {
-  //     // Additional event handling if needed
-  //     // console.log(`User ${user.email} signed in with ${account.provider}`);
-  //   }
-  // }
 };
-
 
 export default async function auth(req, res) {
   return await NextAuth(req, res, authOptions);

@@ -6,8 +6,35 @@ export async function discordRegistrationNotification(userData) {
     return;
   }
 
-  const { email, provider, timestamp, name, isNewUser, subscriptionStatus } = userData;
+  const { 
+    email, 
+    provider, 
+    timestamp, 
+    name, 
+    isNewUser, 
+    subscriptionStatus, 
+    isOnTrial = false,  // Add default value
+    trialEndsAt = null  // Add default value
+  } = userData;
+
+  // Debug log to see what's being passed
+  console.log('Discord notification data:', {
+    isOnTrial,
+    trialEndsAt,
+    fullUserData: userData
+  });
   
+  // Format trial end date as DD.MM.YY HH:MM
+  const trialEndFormatted = trialEndsAt 
+    ? new Date(trialEndsAt).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    : 'N/A';
+
   const embed = {
     title: isNewUser ? "🎉 New User Registration" : "👋 User Sign In",
     color: provider === 'google' ? 0xfddc00 : 0x5865f2,
@@ -30,6 +57,11 @@ export async function discordRegistrationNotification(userData) {
       {
         name: "",
         value: `💎 **Subscription:** ${subscriptionStatus === 'pro' ? '✨ Pro' : '🆓 Basic'}`,
+        inline: false
+      },
+      {
+        name: "",
+        value: `⏰ **Trial Status:** ${isOnTrial ? `✨ Active (ends ${trialEndFormatted})` : '🆓 Not on trial'}`,
         inline: false
       },
       {

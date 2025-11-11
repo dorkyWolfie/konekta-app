@@ -31,6 +31,10 @@ export async function POST(req) {
       { status: 400 });
     }
 
+    // Calculate trial end date (7 days from now)
+    const trialEndsAt = new Date();
+    trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const newUser = await User.create({
@@ -38,7 +42,9 @@ export async function POST(req) {
       email: email.toLowerCase(),
       password: hashedPassword,
       provider: 'credentials',
-      subscriptionStatus: 'basic',
+      subscriptionStatus: 'pro',
+      isOnTrial: true, // Mark as trial user
+      trialEndsAt: trialEndsAt, // Set trial expiration
       isNewUser: true,
       lastLoginAt: new Date()
     });
@@ -49,7 +55,9 @@ export async function POST(req) {
       provider: 'credentials',
       timestamp: new Date(),
       isNewUser: true,
-      subscriptionStatus: newUser.subscriptionStatus
+      subscriptionStatus: newUser.subscriptionStatus,
+      isOnTrial: newUser.isOnTrial,
+      trialEndsAt: newUser.trialEndsAt
     });
 
     await welcomeEmail({
