@@ -1,4 +1,3 @@
-// 'use server';
 import "../globals.css";
 import mongoose from "mongoose";
 import Link from "next/link";
@@ -12,6 +11,7 @@ import { page } from "@/models/page";
 import { Toaster } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare, faBars, faClose } from "@fortawesome/free-solid-svg-icons";
+import Trial from "@/components/trial";
 
 export const metadata = {
   title: "Конекта",
@@ -47,15 +47,18 @@ export default async function AppTemplate({ children, ...rest }) {
   return (
     <div className="overflow-x-hidden">
       <Toaster />
-      <main className="flex min-h-screen " style={{background: Page?.bgColorPage}}>
-        <aside id="sidebar" className="bg-white p-6 relative w-49 min-w-49 md:block hidden">
+      <main className="flex min-h-screen" style={{background: Page?.bgColorPage}}>
+        <aside id="sidebar" className="bg-white !p-6 relative w-60 !justify-center !items-center min-w-49 md:flex hidden">
+          {/* MOBILE MENU CLOSE BUTTON */}
           <button onClick={closeAside} className="md:hidden fixed top-8 left-42 z-10 bg-[#3b82f6] text-white py-2 px-3 shadow-md">
             <FontAwesomeIcon icon={faClose} size="lg" />
           </button>
           <div className="fixed top-8">
+            {/* USER AVATAR */}
             <div className="rounded-full overflow-hidden aspect-square w-24 m-auto">
               <Image src={getSafeImageSrc(session.user.image)} width={256} height={256} alt={"avatar"} className="w-full h-full object-cover" />
             </div>
+            {/* USER LINK (URI) */}
             {Page && (
               <Link 
                 target="_blank"
@@ -66,13 +69,22 @@ export default async function AppTemplate({ children, ...rest }) {
                 <FontAwesomeIcon icon={faArrowUpRightFromSquare} className="w-3 h-3" />
               </Link>
             )}
+            {/* DIVIDER */}
             <div className="w-full h-0.5 bg-[#e5e7eb] mt-6"></div>
+            {/* SIDEBAR NAVIGATION */}
             <div className="flex items-center">
               <AppSidebar />
+            </div>
+            {/* TRIAL EXPIRATION */}
+            <div className="w-48">
+              {/* DIVIDER */}
+            <div className="w-full h-0.5 bg-[#e5e7eb] my-6"></div>
+            <Trial />
             </div>
           </div>
         </aside>
         <div className="grow">
+          {/* MOBILE MENU OPEN BUTTON */}
           <button onClick={openAside} className="md:hidden fixed top-8 right-8 z-10 bg-[#3b82f6] text-white py-2 px-3 shadow-md">
             <FontAwesomeIcon icon={faBars} size="lg" />
           </button>
