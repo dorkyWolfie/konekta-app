@@ -13,18 +13,11 @@ export async function discordRegistrationNotification(userData) {
     name, 
     isNewUser, 
     subscriptionStatus, 
-    isOnTrial = false,  // Add default value
-    trialEndsAt = null  // Add default value
+    isOnTrial = false,
+    trialEndsAt = null
   } = userData;
-
-  // Debug log to see what's being passed
-  console.log('Discord notification data:', {
-    isOnTrial,
-    trialEndsAt,
-    fullUserData: userData
-  });
   
-  // Format trial end date as DD.MM.YY HH:MM
+  // Format trial end date
   const trialEndFormatted = trialEndsAt 
     ? new Date(trialEndsAt).toLocaleString('en-US', {
         month: 'short',
