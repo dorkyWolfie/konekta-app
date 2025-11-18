@@ -10,7 +10,7 @@ export default function AppSidebar() {
   const path = usePathname();
 
   return (
-    <nav className="inline-flex mx-auto items-start flex-col mt-8 gap-6">
+    <nav className="inline-flex mx-auto items-start flex-col mt-8 sm:gap-6 gap-4">
       <Link href={'/account'} 
       className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]" 
         + (path === '/account' ? '!text-[#3b82f6] font-bold items-center' : '')} >
@@ -40,7 +40,7 @@ export default function AppSidebar() {
         className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]"}
         iconClasses={'w-6 h-6'}
       />
-      <Link href={'/'} className="flex items-center gap-2 text-xs uppercase text-[#4b5563] pt-6 cursor-pointer hover:text-[#3b82f6] border-t-2 border-[#e5e7eb]">
+      <Link href={'/'} className="flex items-center gap-2 text-xs uppercase text-[#4b5563] pt-6 sm:mt-0 mt-2 cursor-pointer hover:text-[#3b82f6] border-t-2 border-[#e5e7eb]">
         <FontAwesomeIcon icon={faArrowLeft} className={"w-3 h-3"} />
         <span>Назад кон почетна</span>
       </Link>

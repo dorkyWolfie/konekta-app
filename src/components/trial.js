@@ -23,7 +23,7 @@ export default async function Trial() {
     <div className="text-center">
       {session?.user?.isOnTrial && (
         <div className="">
-          <p className="mb-4 text-[#dc2626]">Тест верзијата истекува за <span className="font-bold text-[#dc2626]">{trialDaysLeft} ден{trialDaysLeft !== 1 ? 'a' : ''}</span></p>
+          <p className="mb-2 text-[#dc2626]">Тест верзијата истекува за <span className="font-bold text-[#dc2626]">{trialDaysLeft} ден{trialDaysLeft !== 1 ? 'a' : ''}</span></p>
           <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">Активирај го профилот</Link>
         </div>
       )}
@@ -34,7 +34,7 @@ export default async function Trial() {
       
       {!session?.user?.isOnTrial && session?.user?.subscriptionStatus === 'pro' && (
         <div>
-          <p className="mb-4 text-[#15803d]">Профилот е активен</p>
+          <p className="mb-2 text-[#15803d]">Профилот е активен</p>
           <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">Прашања и забелешки</Link>
         </div>
       )}

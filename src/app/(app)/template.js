@@ -75,12 +75,12 @@ export default async function AppTemplate({ children, ...rest }) {
             <div className="flex items-center">
               <AppSidebar />
             </div>
-            {/* TRIAL EXPIRATION */}
-            <div className="w-48">
-              {/* DIVIDER */}
-            <div className="w-full h-0.5 bg-[#e5e7eb] my-6"></div>
+          </div>
+          {/* TRIAL EXPIRATION */}
+          <div className="fixed bottom-8 !mx-auto">
+            {/* DIVIDER */}
+            <div className="px-4"><div className="w-full h-0.5 bg-[#e5e7eb] my-6"></div></div>
             <Trial />
-            </div>
           </div>
         </aside>
         <div className="grow">
