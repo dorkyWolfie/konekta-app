@@ -3,6 +3,7 @@ import { S3Client } from '@aws-sdk/client-s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { page } from '@/models/page';
 import uniqid from 'uniqid';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -14,6 +15,12 @@ export async function POST(req) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const Page = await page.findOne({ owner: session?.user?.email });
+
+    if (!Page) {
+      return Response.json({ error: 'Page not found' }, { status: 404 });
     }
 
     const formData = await req.formData();
@@ -59,7 +66,7 @@ export async function POST(req) {
     }
 
 
-    const newFilename = `${session.user.email}-${randomId}.${ext}`;
+    const newFilename = `${Page.uri}-${randomId}.${ext}`;
     const bucketName = process.env.BUCKET_NAME;
 
     const chunks = [];
