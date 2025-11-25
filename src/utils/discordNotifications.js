@@ -95,7 +95,7 @@ export async function discordExpiringAccountNotification({
   expiresAt,
   accountType // 'trial' or 'pro'
 }) {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  const webhookUrl = process.env.DISCORD_WEBHOOK_URL_2;
   
   if (!webhookUrl) {
     console.error('Discord webhook URL not configured');
