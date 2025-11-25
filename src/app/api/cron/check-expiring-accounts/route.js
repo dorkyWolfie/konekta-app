@@ -13,48 +13,42 @@ export async function GET(req) {
     await mongoose.connect(process.env.MONGO_URI);
 
     const now = new Date();
+    const twentyFourHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
     
     console.log('=== Checking Expiring Accounts ===');
     console.log('Current time:', now.toISOString());
+    console.log('24 hours from now:', twentyFourHoursFromNow.toISOString());
 
-    // Get ALL trial users and check manually
+    // Get trial users expiring in the next 24 hours
     const allTrialUsers = await User.find({
       isOnTrial: true,
-      trialEndsAt: { $exists: true, $ne: null }
+      trialEndsAt: {
+        $gte: now,
+        $lte: twentyFourHoursFromNow
+      }
     }).select('name email trialEndsAt');
 
-    console.log(`Total trial users found: ${allTrialUsers.length}`);
+    console.log(`Trial users expiring in next 24 hours: ${allTrialUsers.length}`);
 
-    // Filter trial users expiring in 0-2 days (gives us a window)
-    const expiringTrials = allTrialUsers.filter(user => {
-      const daysUntilExpiry = Math.ceil((new Date(user.trialEndsAt) - now) / (1000 * 60 * 60 * 24));
-      console.log(`User ${user.email}: expires in ${daysUntilExpiry} days (${user.trialEndsAt})`);
-      return daysUntilExpiry >= 0 && daysUntilExpiry <= 2; // 0-2 days
-    });
+    // Calculate 10 days from now (with 24 hour window)
+    const tenDaysFromNow = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
+    const tenDaysPlus24Hours = new Date(tenDaysFromNow.getTime() + 24 * 60 * 60 * 1000);
 
-    console.log(`Trial users expiring in 0-2 days: ${expiringTrials.length}`);
-
-    // Get ALL pro users (not on trial) with expiration dates
+    // Get pro users expiring in 10 days (within a 24-hour window)
     const allProUsers = await User.find({
       subscriptionStatus: 'pro',
       isOnTrial: false,
-      subscriptionExpiresAt: { $exists: true, $ne: null }
+      subscriptionExpiresAt: {
+        $gte: tenDaysFromNow,
+        $lte: tenDaysPlus24Hours
+      }
     }).select('name email subscriptionExpiresAt');
 
-    console.log(`Total pro users found: ${allProUsers.length}`);
-
-    // Filter pro users expiring in 9-11 days
-    const expiringProAccounts = allProUsers.filter(user => {
-      const daysUntilExpiry = Math.ceil((new Date(user.subscriptionExpiresAt) - now) / (1000 * 60 * 60 * 24));
-      console.log(`User ${user.email}: expires in ${daysUntilExpiry} days (${user.subscriptionExpiresAt})`);
-      return daysUntilExpiry >= 9 && daysUntilExpiry <= 11; // 9-11 days
-    });
-
-    console.log(`Pro users expiring in 9-11 days: ${expiringProAccounts.length}`);
+    console.log(`Pro users expiring in 10 days (24h window): ${allProUsers.length}`);
 
     // Send notifications for expiring trials
     let trialNotificationsSent = 0;
-    for (const user of expiringTrials) {
+    for (const user of allTrialUsers) {
       try {
         await discordExpiringAccountNotification({
           name: user.name,
@@ -71,7 +65,7 @@ export async function GET(req) {
 
     // Send notifications for expiring pro accounts
     let proNotificationsSent = 0;
-    for (const user of expiringProAccounts) {
+    for (const user of allProUsers) {
       try {
         await discordExpiringAccountNotification({
           name: user.name,
@@ -89,9 +83,9 @@ export async function GET(req) {
     return new Response(
       JSON.stringify({ 
         message: 'Expiring accounts checked successfully',
-        expiringTrials: expiringTrials.length,
+        expiringTrials: allTrialUsers.length,
         trialNotificationsSent,
-        expiringProAccounts: expiringProAccounts.length,
+        expiringProAccounts: allProUsers.length,
         proNotificationsSent,
         timestamp: now.toISOString()
       }), 
