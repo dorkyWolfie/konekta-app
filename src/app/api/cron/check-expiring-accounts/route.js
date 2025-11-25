@@ -14,72 +14,93 @@ export async function GET(req) {
 
     const now = new Date();
     
-    // Calculate date ranges
-    const oneDayFromNow = new Date(now);
-    oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
-    const oneDayFromNowEnd = new Date(oneDayFromNow);
-    oneDayFromNowEnd.setHours(23, 59, 59, 999);
-    const oneDayFromNowStart = new Date(oneDayFromNow);
-    oneDayFromNowStart.setHours(0, 0, 0, 0);
+    console.log('=== Checking Expiring Accounts ===');
+    console.log('Current time:', now.toISOString());
 
-    const tenDaysFromNow = new Date(now);
-    tenDaysFromNow.setDate(tenDaysFromNow.getDate() + 10);
-    const tenDaysFromNowEnd = new Date(tenDaysFromNow);
-    tenDaysFromNowEnd.setHours(23, 59, 59, 999);
-    const tenDaysFromNowStart = new Date(tenDaysFromNow);
-    tenDaysFromNowStart.setHours(0, 0, 0, 0);
-
-    // Find trial accounts expiring in 1 day
-    const expiringTrials = await User.find({
+    // Get ALL trial users and check manually
+    const allTrialUsers = await User.find({
       isOnTrial: true,
-      trialEndsAt: {
-        $gte: oneDayFromNowStart,
-        $lte: oneDayFromNowEnd
-      }
+      trialEndsAt: { $exists: true, $ne: null }
     }).select('name email trialEndsAt');
 
-    // Find pro accounts expiring in 10 days
-    const expiringProAccounts = await User.find({
+    console.log(`Total trial users found: ${allTrialUsers.length}`);
+
+    // Filter trial users expiring in 0-2 days (gives us a window)
+    const expiringTrials = allTrialUsers.filter(user => {
+      const daysUntilExpiry = Math.ceil((new Date(user.trialEndsAt) - now) / (1000 * 60 * 60 * 24));
+      console.log(`User ${user.email}: expires in ${daysUntilExpiry} days (${user.trialEndsAt})`);
+      return daysUntilExpiry >= 0 && daysUntilExpiry <= 2; // 0-2 days
+    });
+
+    console.log(`Trial users expiring in 0-2 days: ${expiringTrials.length}`);
+
+    // Get ALL pro users (not on trial) with expiration dates
+    const allProUsers = await User.find({
       subscriptionStatus: 'pro',
       isOnTrial: false,
-      subscriptionExpiresAt: {
-        $gte: tenDaysFromNowStart,
-        $lte: tenDaysFromNowEnd
-      }
+      subscriptionExpiresAt: { $exists: true, $ne: null }
     }).select('name email subscriptionExpiresAt');
 
+    console.log(`Total pro users found: ${allProUsers.length}`);
+
+    // Filter pro users expiring in 9-11 days
+    const expiringProAccounts = allProUsers.filter(user => {
+      const daysUntilExpiry = Math.ceil((new Date(user.subscriptionExpiresAt) - now) / (1000 * 60 * 60 * 24));
+      console.log(`User ${user.email}: expires in ${daysUntilExpiry} days (${user.subscriptionExpiresAt})`);
+      return daysUntilExpiry >= 9 && daysUntilExpiry <= 11; // 9-11 days
+    });
+
+    console.log(`Pro users expiring in 9-11 days: ${expiringProAccounts.length}`);
+
     // Send notifications for expiring trials
+    let trialNotificationsSent = 0;
     for (const user of expiringTrials) {
-      await discordExpiringAccountNotification({
-        name: user.name,
-        email: user.email,
-        expiresAt: user.trialEndsAt,
-        accountType: 'trial'
-      });
+      try {
+        await discordExpiringAccountNotification({
+          name: user.name,
+          email: user.email,
+          expiresAt: user.trialEndsAt,
+          accountType: 'trial'
+        });
+        trialNotificationsSent++;
+        console.log(`✓ Sent trial expiration notification to ${user.email}`);
+      } catch (error) {
+        console.error(`✗ Failed to send notification to ${user.email}:`, error);
+      }
     }
 
     // Send notifications for expiring pro accounts
+    let proNotificationsSent = 0;
     for (const user of expiringProAccounts) {
-      await discordExpiringAccountNotification({
-        name: user.name,
-        email: user.email,
-        expiresAt: user.subscriptionExpiresAt,
-        accountType: 'pro'
-      });
+      try {
+        await discordExpiringAccountNotification({
+          name: user.name,
+          email: user.email,
+          expiresAt: user.subscriptionExpiresAt,
+          accountType: 'pro'
+        });
+        proNotificationsSent++;
+        console.log(`✓ Sent pro expiration notification to ${user.email}`);
+      } catch (error) {
+        console.error(`✗ Failed to send notification to ${user.email}:`, error);
+      }
     }
 
     return new Response(
       JSON.stringify({ 
         message: 'Expiring accounts checked successfully',
         expiringTrials: expiringTrials.length,
-        expiringProAccounts: expiringProAccounts.length
+        trialNotificationsSent,
+        expiringProAccounts: expiringProAccounts.length,
+        proNotificationsSent,
+        timestamp: now.toISOString()
       }), 
       { status: 200 }
     );
   } catch (error) {
     console.error('Error checking expiring accounts:', error);
     return new Response(
-      JSON.stringify({ error: 'Server error' }), 
+      JSON.stringify({ error: 'Server error', details: error.message }), 
       { status: 500 }
     );
   }
