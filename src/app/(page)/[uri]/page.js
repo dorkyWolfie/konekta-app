@@ -151,7 +151,7 @@ export default async function UserPage({params, searchParams}) {
       </div>
       {/* avatar image */}
       <Image src={getSafeImageSrc(User.image)} width={130} height={130} alt={"avatar"} className="rounded-full bg-white border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
-      <div className="max-w-2xl mx-auto px-4 pb-10">
+      <div className="max-w-2xl mx-auto px-4 pb-18">
         {/* personal info */}
         <div className="flex flex-col items-center mt-4">
           <h2 className="text-2xl font-bold">{content.displayName}</h2>

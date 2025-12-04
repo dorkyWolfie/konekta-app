@@ -245,7 +245,7 @@ textarea {
   }
 
   .mobButton svg {
-    @apply p-0 w-7 h-7 text-2xl;
+    @apply p-0 w-5 h-5 text-2xl;
   }
 
   .mobButton span {
