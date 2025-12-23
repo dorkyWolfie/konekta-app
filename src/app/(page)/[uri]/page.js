@@ -10,6 +10,7 @@ import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { event } from "@/models/event";
 import { getLocalizedContent, errorMessages } from "@/lib/i18n";
+import { getTextColors } from '@/utils/colorUtils';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFilePdf, faBuilding } from "@fortawesome/free-solid-svg-icons";
 import { faDiscord, faFacebook, faGithub, faInstagram, faTelegram, faTiktok, faWhatsapp, faYoutube, faTwitter, faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -134,12 +135,15 @@ export default async function UserPage({params, searchParams}) {
     button.isActive && button.value && button.value.trim() !== ''
   );
 
+  // Get right text color
+  const { textColor1, textColor2 } = getTextColors(Page.bgColorPage);
+
   return (
     <main>
       {/* Language Switcher */}
       <LanguageSwitcher uri={uri} currentLang={lang} page={Page} />
       {/* bg color overlay on entire page */}
-      <div className="w-full h-screen fixed z-[-10] absolute top-0 bg-[#f9fafb]" style={{background: Page.bgColorPage}}></div>
+      <div className="w-full h-screen fixed z-[-10] absolute top-0" style={{background: Page.bgColorPage}} />
       {/* bg color or image set from account above the avatar image */}
       <div 
         className="h-80 max-sm:h-60 bg-[#dbeafe] bg-cover bg-center"
@@ -154,26 +158,28 @@ export default async function UserPage({params, searchParams}) {
       <div className="max-w-2xl mx-auto px-4 pb-18">
         {/* personal info */}
         <div className="flex flex-col items-center mt-4">
-          <h2 className="text-2xl font-bold">{content.displayName}</h2>
-          <h3 className="flex flex-row items-center gap-2 mt-1 text-[#374151] text-sm">
+          <h2 className="text-2xl font-bold" style={{ color: textColor1 }}>{content.displayName}</h2>
+          <h3 className="flex flex-row items-center gap-2 mt-1 text-sm" style={{ color: textColor1 }}>
             {content.company && (
-              <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm">
+              <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-sm" style={{ color: textColor2 }}>
                 <FontAwesomeIcon icon={faBuilding} className="w-3 h-3" />
                 {content.company}
                 <span>•</span>
               </span>
             )}
             {content.position && (
-              <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm">
+              <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-sm" style={{ color: textColor2 }}>
                 <FontAwesomeIcon icon={faBriefcase} className="pt-[1px] w-3 h-3" />
                 {content.position}
               </span>
             )}
           </h3>
-          <h3 className="flex flex-row gap-2 mt-1 mb-1 text-[#374151] text-sm">
-            {content.location && (<span className="flex flex-row items-center gap-2 mt-1 mb-1 text-[#374151] text-sm"><FontAwesomeIcon icon={faLocationDot} width={10} /> {content.location}</span>)}
+          <h3 className="flex flex-row gap-2 mt-1 mb-1 text-sm"  style={{ color: textColor2 }}>
+            {content.location && (
+              <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-sm"><FontAwesomeIcon icon={faLocationDot} width={10} /> {content.location}</span>
+            )}
           </h3>
-          <p className="max-w-md mx-auto text-center text-[#1f2937] text-md">{content.bio}</p>
+          <p className="max-w-md mx-auto text-center text-md" style={{ color: textColor2 }}>{content.bio}</p>
         </div>
         {/* Buttons section */}
         {activeButtons.length > 0 && (
@@ -244,9 +250,9 @@ export default async function UserPage({params, searchParams}) {
         </div>
       </div>
       <div className="contactDiv">
-        <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow mobButton" />
-        <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow mobButton" />
-        <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow cursor-pointer mobButton" />
+        <SaveContact uri={Page.uri} lang={lang} className="button-1 sm:shadow mobButton" />
+        <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 sm:shadow mobButton" />
+        <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 sm:shadow cursor-pointer mobButton" />
       </div>
     </main>
   )
