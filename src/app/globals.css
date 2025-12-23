@@ -233,11 +233,11 @@ textarea {
 
 @media screen and (max-width: 600px) {
   .contactDiv {
-    @apply p-3 bottom-0 bg-white/20 backdrop-blur-sm gap-4;
+    @apply px-4 py-3 bottom-0 bg-white/40 backdrop-blur-sm gap-4 justify-between;
   }
 
   .mobButton {
-    @apply bg-white text-[#2563eb] px-4 py-3;
+    @apply bg-transparent text-[#2563eb] px-8 py-2;
   }
 
   .mobButton:hover {
