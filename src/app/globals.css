@@ -232,16 +232,29 @@ textarea {
 }
 
 @media screen and (max-width: 600px) {
+  .tooltip {
+    @apply absolute p-4 text-white bg-blue-500 top-0 left-5;
+  }
+  .tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 0, 0, 0.8);
+}
+
   .contactDiv {
     @apply px-4 py-3 bottom-0 bg-white/40 backdrop-blur-sm gap-4 justify-between;
   }
 
   .mobButton {
-    @apply bg-transparent text-[#2563eb] px-8 py-2;
+    @apply bg-transparent border-b-2 border-transparent text-[#2563eb] px-8 py-2;
   }
 
   .mobButton:hover {
-    @apply bg-[#2563eb] text-white px-4 py-3;
+    @apply bg-transparent border-b-2 border-[#2563eb] ease-in-out duration-300;
   }
 
   .mobButton svg {

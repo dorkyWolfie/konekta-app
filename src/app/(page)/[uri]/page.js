@@ -9,7 +9,7 @@ import ShareContactButton from "@/components/buttons/shareContactButton";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { event } from "@/models/event";
-import { getLocalizedContent, errorMessages } from "@/lib/i18n";
+import { getLocalizedContent, errorMessages, shareContactMessages, contactMessages } from "@/lib/i18n";
 import { getTextColors } from '@/utils/colorUtils';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFilePdf, faBuilding } from "@fortawesome/free-solid-svg-icons";
@@ -129,6 +129,9 @@ export default async function UserPage({params, searchParams}) {
   }
 
   const content = getLocalizedContent(Page, lang);
+  const mButton1 = shareContactMessages[lang];
+  const mButton2 = contactMessages[lang];
+  const mButton3 = lang === 'en' ? 'Save Contact' : 'Превземи контакт';
 
   // Get active buttons from localized content
   const activeButtons = content.buttons.filter(button =>
@@ -250,9 +253,24 @@ export default async function UserPage({params, searchParams}) {
         </div>
       </div>
       <div className="contactDiv">
-        <SaveContact uri={Page.uri} lang={lang} className="button-1 sm:shadow mobButton" />
-        <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 sm:shadow mobButton" />
-        <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 sm:shadow cursor-pointer mobButton" />
+        <div className="relative group">
+          <SaveContact uri={Page.uri} lang={lang} className="button-1 sm:shadow mobButton" />
+          <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-blue-700 text-white text-sm whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            {mButton3}
+          </div>
+        </div>
+        <div className="relative group">
+          <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 sm:shadow mobButton" />
+          <div className="absolute bottom-full left-0 mb-2 px-3 py-2 bg-blue-700 text-white text-sm whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            {mButton2.buttonText}
+          </div>
+        </div>
+        <div className="relative group">
+          <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 sm:shadow cursor-pointer mobButton" />
+          <div className="absolute bottom-full right-0 mb-2 px-3 py-2 bg-blue-700 text-white text-sm whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            {mButton1.buttonText}
+          </div>
+        </div>
       </div>
     </main>
   )
