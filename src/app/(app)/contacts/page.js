@@ -118,7 +118,7 @@ export default async function ContactsPage() {
         <div className="text-center py-8">
           <p className="text-[#6b7280] text-lg">Немате примени контакти</p>
           <p className="text-sm text-[#9ca3af] mt-2">
-            Контактите ќе се појават овде кога некој ќе ги прати преку вашите страници
+            Контактите ќе се појават овде кога некој ќе ги прати преку вашата страница
           </p>
         </div>
       )}

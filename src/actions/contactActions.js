@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { contact } from "@/models/contact";
+import { sendNewContactNotification } from "@/utils/contactNotifications";
 
 function validateInput(key, value) {
   const maxLengths = {
@@ -46,6 +47,13 @@ export async function saveExchangeContact(formData) {
       return false;
     }
 
+    // Get owner's email and name
+    const owner = await user.findOne({ email: targetPage.owner }).select('email name _id');
+    if (!owner) {
+      console.log('Page owner not found');
+      return false;
+    }
+
     const dataKeys = [
       'contactName', 'contactLastName', 'contactCompany', 'contactPosition', 'contactEmail', 'contactPhone'
     ];
@@ -76,6 +84,19 @@ export async function saveExchangeContact(formData) {
 
     // Create new contact entry
     const newContact = await contact.create(contactData);
+
+    // Send email notification to page owner
+    await sendNewContactNotification({
+      ownerEmail: owner.email,
+      ownerName: owner.name,
+      contactName: contactData.contactName,
+      contactLastName: contactData.contactLastName,
+      contactCompany: contactData.contactCompany,
+      contactPosition: contactData.contactPosition,
+      contactEmail: contactData.contactEmail,
+      contactPhone: contactData.contactPhone,
+      targetPageUri: targetPageUri
+    });
 
     return true;
   } catch (error) {
