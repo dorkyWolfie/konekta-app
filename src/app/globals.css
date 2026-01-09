@@ -231,26 +231,17 @@ textarea {
   @apply w-full px-4 fixed z-10 bottom-2 left-[50%] transform -translate-x-[50%] flex flex-row gap-2 items-center justify-center;
 }
 
-@media screen and (max-width: 600px) {
-  .tooltip {
-    @apply absolute p-4 text-white bg-blue-500 top-0 left-5;
-  }
-  .tooltip::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: rgba(0, 0, 0, 0.8);
-}
-
+@media screen and (max-width: 685px) {
   .contactDiv {
-    @apply px-4 py-3 bottom-0 bg-white/40 backdrop-blur-sm gap-4 justify-between;
+    @apply px-4 py-3 bottom-0 bg-white/40 backdrop-blur-sm gap-4 flex flex-row justify-between items-center;
+  }
+
+  .mobButton button {
+    @apply flex flex-col items-center justify-center gap-2;
   }
 
   .mobButton {
-    @apply bg-transparent border-b-2 border-transparent text-[#2563eb] px-8 py-2;
+    @apply flex flex-col items-center gap-2 bg-transparent border-b-2 border-transparent text-[#2563eb] text-xs px-1 py-0 shadow-none;
   }
 
   .mobButton:hover {
@@ -260,11 +251,8 @@ textarea {
   .mobButton svg {
     @apply p-0 w-5 h-5 text-2xl;
   }
-
-  .mobButton span {
-    @apply hidden;
-  }
 }
+
 /* ---- URI - CONTACT BUTTONS END ---- */
 
 @media screen and (max-width: 390px) {
