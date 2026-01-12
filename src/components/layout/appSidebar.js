@@ -12,24 +12,24 @@ export default function AppSidebar() {
   return (
     <nav className="inline-flex mx-auto items-start flex-col mt-8 sm:gap-6 gap-4">
       <Link href={'/account'} 
-      className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]" 
-        + (path === '/account' ? '!text-[#3b82f6] font-bold items-center' : '')} >
+      className={"sidebarLink" 
+        + (path === '/account' ? '!text-[#3b82f6] font-[900] flex items-center gap-4 mobileActive' : '')} >
         <FontAwesomeIcon 
           icon={faFileLines} 
           className="w-6 h-6" />
         <span>Профил</span>
       </Link>
       <Link href={'/analytics'} 
-        className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]" 
-        + (path === '/analytics' ? '!text-[#3b82f6] font-bold items-center' : '')}>
+        className={"sidebarLink" 
+        + (path === '/analytics' ? '!text-[#3b82f6] font-[900] flex items-center gap-4 mobileActive' : '')}>
         <FontAwesomeIcon 
           icon={faChartLine} 
           className="w-6 h-6" />
         <span>Аналитика</span>
       </Link>
       <Link href={'/contacts'} 
-      className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]" 
-        + (path === '/contacts' ? '!text-[#3b82f6] font-bold items-center' : '')} >
+        className={"sidebarLink" 
+        + (path === '/contacts' ? '!text-[#3b82f6] font-[900] flex items-center gap-4 mobileActive' : '')} >
         <FontAwesomeIcon 
           icon={faAddressBook} 
           className="w-6 h-6" />
@@ -37,14 +37,14 @@ export default function AppSidebar() {
       </Link>
       <LogoutButton 
         iconLeft={true}
-        className={"flex gap-4 items-center cursor-pointer hover:text-[#3b82f6]"}
+        className={"sidebarLink"}
         iconClasses={'w-6 h-6'}
       />
-      <Link href={'/'} className="flex items-center gap-2 text-xs uppercase text-[#4b5563] pt-6 sm:mt-0 mt-2 cursor-pointer hover:text-[#3b82f6] border-t-2 border-[#e5e7eb]">
+      <Link href={'/'} className="sidebarLink sidebarLink2 pt-6 mt-2 border-t-2 border-[#e5e7eb]">
         <FontAwesomeIcon icon={faArrowLeft} className={"w-3 h-3"} />
         <span>Назад кон почетна</span>
       </Link>
-      <Link href={'https://konekta.mk'} className="flex items-center gap-2 text-xs uppercase text-[#4b5563] cursor-pointer hover:text-[#3b82f6]">
+      <Link href={'https://konekta.mk'} className="sidebarLink sidebarLink2">
         <FontAwesomeIcon 
           icon={faAddressCard}
           className={"w-3 h-3"} />
