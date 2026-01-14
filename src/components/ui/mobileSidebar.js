@@ -33,10 +33,6 @@ export default async function MobileSidebar() {
       {Page && (
         <Link target="_blank" href={'/' + Page.uri} className="flex flex-col items-center gap-1">
           <Image src={getSafeImageSrc(session.user.image)} width={256} height={256} alt={"avatar"} className="w-12 h-12 object-cover rounded-full overflow-hidden" />
-          <div className="flex flex-row items-center">
-            <Image src="/konekta_logo_4.png" alt="dekorativna slika" width={20} height={20}  />
-            <span>/{Page.uri}</span>
-          </div>
         </Link>
       )}
       <AppSidebar />

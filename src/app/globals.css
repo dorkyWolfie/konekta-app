@@ -249,7 +249,36 @@ textarea {
 }
 
 .mobileMenu {
-  @apply hidden;
+    @apply hidden;
+  }
+
+@media screen and (max-width: 900px) {
+  #sidebar {
+    @apply hidden;
+  }
+  .mobileMenu {
+      @apply fixed bottom-0 left-0 flex items-end justify-center gap-4 bg-white w-full px-2 py-2 text-sm;
+    }
+
+    nav {
+      @apply flex flex-row items-center justify-evenly m-0;
+    }
+
+    .sidebarLink, .mobileActive {
+      @apply flex !flex-col gap-2 items-center uppercase text-xs;
+    }
+
+    .sidebarLink2 {
+      @apply hidden;
+    }
+
+    .accMain {
+      @apply mb-21;
+    }
+
+    .sidebarLink svg, .mobileActive svg {
+      @apply w-5 h-5;
+    }
 }
 
 @media screen and (max-width: 685px) {
@@ -271,30 +300,6 @@ textarea {
 
   .mobButton svg {
     @apply p-0 w-5 h-5 text-2xl;
-  }
-  
-  .mobileMenu {
-    @apply fixed bottom-0 left-0 flex items-end justify-evenly bg-white w-full px-4 py-2 text-sm;
-  }
-
-  nav {
-    @apply flex flex-row items-center justify-evenly m-0;
-  }
-
-  .sidebarLink, .mobileActive {
-    @apply flex !flex-col gap-2 items-center uppercase text-xs;
-  }
-
-  .sidebarLink2 {
-    @apply hidden;
-  }
-
-  .accMain {
-    @apply mb-21;
-  }
-
-  .sidebarLink svg, .mobileActive svg {
-    @apply w-5 h-5;
   }
 }
 /* ---- URI - CONTACT BUTTONS END ---- */

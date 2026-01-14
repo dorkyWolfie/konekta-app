@@ -78,10 +78,13 @@ export const contactMessages = {
     h1: "Exchange Contact",
     description: "Send your information to",
     firstName: "First Name*",
+    firstNamePlaceholder: "First Name* (required)",
     lastName: "Last Name*",
+    lastNamePlaceholder: "Last Name* (required)",
     company: "Company",
     position: "Position",
     email: "Email*",
+    emailPlaceholder: "Email* (required)",
     phone: "Phone",
     save: "Send Contact",
     buttonText: "Exchange Contact"
