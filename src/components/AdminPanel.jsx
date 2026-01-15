@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Search, Edit2, Save, X, User, AlertCircle, Lock } from 'lucide-react';
+import { Search, Edit2, Save, X, User, AlertCircle, Lock, Mail } from 'lucide-react';
 
 export default function AdminPanel() {
   const { data: session, status } = useSession();
@@ -14,6 +14,14 @@ export default function AdminPanel() {
   const [searchTerm, setSearchTerm] = useState('');
   const [editingUser, setEditingUser] = useState(null);
   const [saving, setSaving] = useState(false);
+
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [announcementData, setAnnouncementData] = useState({
+    subject: '',
+    message: '',
+    recipientFilter: 'all'
+  });
+  const [sendingAnnouncement, setSendingAnnouncement] = useState(false);
 
   const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -101,6 +109,41 @@ export default function AdminPanel() {
       alert('Failed to update user');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSendAnnouncement = async () => {
+    if (!announcementData.subject || !announcementData.message) {
+      alert('Пополнете наслов и порака');
+      return;
+    }
+
+    if (!confirm(`Испрати емаил до ${announcementData.recipientFilter === 'all' ? 'сите' : announcementData.recipientFilter} корисници?`)) {
+      return;
+    }
+  
+    try {
+      setSendingAnnouncement(true);
+      const response = await fetch('/api/admin/send-announcement', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(announcementData)
+      });
+    
+      const data = await response.json();
+    
+      if (response.ok) {
+        alert(`✓ Емаил испратен до ${data.sentCount} корисници! Неуспешни: ${data.failedCount}`);
+        setShowAnnouncementModal(false);
+        setAnnouncementData({ subject: '', message: '', recipientFilter: 'all' });
+      } else {
+        alert('Грешка: ' + data.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Неуспешно испраќање');
+    } finally {
+      setSendingAnnouncement(false);
     }
   };
 
@@ -192,9 +235,18 @@ export default function AdminPanel() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">User Management</h1>
               <p className="text-gray-600">Manage user subscriptions and trial periods</p>
             </div>
-            <div className="text-right">
-              <p className="text-sm text-gray-500">Logged in as</p>
-              <p className="text-sm font-medium text-gray-900">{session.user.email}</p>
+            <div className="flex gap-3 items-center">
+              <button
+                onClick={() => setShowAnnouncementModal(true)}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
+              >
+                <Mail size={16} />
+                Испрати известување
+              </button>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Logged in as</p>
+                <p className="text-sm font-medium text-gray-900">{session.user.email}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -476,6 +528,98 @@ export default function AdminPanel() {
                     <>
                       <Save size={16} />
                       Save Changes
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Announcement Modal */}
+      {showAnnouncementModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Испрати известување</h2>
+                <button
+                  onClick={() => setShowAnnouncementModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+      
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Примачи
+                  </label>
+                  <select
+                    value={announcementData.recipientFilter}
+                    onChange={(e) => setAnnouncementData({...announcementData, recipientFilter: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  >
+                    <option value="all">Сите корисници</option>
+                    <option value="pro">Само Pro корисници</option>
+                    <option value="basic">Само Basic корисници</option>
+                    <option value="trial">Само корисници на пробен период</option>
+                  </select>
+                </div>
+      
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Наслов
+                  </label>
+                  <input
+                    type="text"
+                    value={announcementData.subject}
+                    onChange={(e) => setAnnouncementData({...announcementData, subject: e.target.value})}
+                    placeholder="Нови функции на Konekta!"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  />
+                </div>
+      
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Порака (HTML поддржан)
+                  </label>
+                  <textarea
+                    value={announcementData.message}
+                    onChange={(e) => setAnnouncementData({...announcementData, message: e.target.value})}
+                    placeholder="<p>Ви ја објавуваме...</p>"
+                    rows={12}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Користете HTML за форматирање. Пример: &lt;p&gt;текст&lt;/p&gt;, &lt;strong&gt;задебелено&lt;/strong&gt;
+                  </p>
+                </div>
+              </div>
+      
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowAnnouncementModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  disabled={sendingAnnouncement}
+                >
+                  Откажи
+                </button>
+                <button
+                  onClick={handleSendAnnouncement}
+                  disabled={sendingAnnouncement}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50"
+                >
+                  {sendingAnnouncement ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Се испраќа...
+                    </>
+                  ) : (
+                    <>
+                      <Mail size={16} />
+                      Испрати
                     </>
                   )}
                 </button>
