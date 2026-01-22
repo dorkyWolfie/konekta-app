@@ -226,7 +226,7 @@ textarea {
 }
 /* ---- CONTACT FORM END ---- */
 
-/* ---- URI - CONTACT BUTTONS START ---- */
+/* ---- URI - CONTACT BUTTONS ---- */
 .contactDiv {
   @apply w-full px-4 fixed z-10 bottom-2 left-[50%] transform -translate-x-[50%] flex flex-row gap-2 items-center justify-center;
 }
@@ -249,41 +249,42 @@ textarea {
 }
 
 .mobileMenu {
-    @apply hidden;
-  }
+  @apply hidden;
+}
 
 @media screen and (max-width: 900px) {
   #sidebar {
     @apply hidden;
   }
+
   .mobileMenu {
-      @apply fixed bottom-0 left-0 flex items-end justify-center gap-4 bg-white w-full px-2 py-2 text-sm;
-    }
-
-    nav {
-      @apply flex flex-row items-center justify-evenly m-0;
-    }
-
-    .sidebarLink, .mobileActive {
-      @apply flex !flex-col gap-2 items-center uppercase text-xs;
-    }
-
-    .sidebarLink2 {
-      @apply hidden;
-    }
-
-    .accMain {
-      @apply mb-21;
-    }
-
-    .sidebarLink svg, .mobileActive svg {
-      @apply w-5 h-5;
-    }
+    @apply fixed bottom-0 left-0 flex items-end justify-center gap-4 bg-white w-full px-2 py-2 text-sm;
+  }
+  
+  nav {
+    @apply flex flex-row items-center justify-evenly m-0;
+  }
+  
+  .sidebarLink, .mobileActive {
+    @apply flex !flex-col gap-2 items-center uppercase text-xs;
+  }
+  
+  .sidebarLink2 {
+    @apply hidden;
+  }
+  
+  .accMain {
+    @apply mb-21;
+  }
+  
+  .sidebarLink svg, .mobileActive svg {
+    @apply w-4 h-4;
+  }
 }
 
 @media screen and (max-width: 685px) {
   .contactDiv {
-    @apply px-4 py-3 bottom-0 bg-white/40 backdrop-blur-sm gap-4 flex flex-row justify-between items-center;
+    @apply px-4 py-3 bottom-0 bg-white/80 backdrop-blur-sm gap-4 flex flex-row items-center;
   }
 
   .mobButton button {
@@ -291,7 +292,7 @@ textarea {
   }
 
   .mobButton {
-    @apply flex flex-col items-center gap-2 bg-transparent border-b-2 border-transparent text-[#2563eb] text-xs px-1 py-0 shadow-none;
+    @apply flex flex-col items-center gap-2 bg-transparent border-b-2 border-transparent text-[#172554] text-xs px-1 py-0 shadow-none;
   }
 
   .mobButton:hover {

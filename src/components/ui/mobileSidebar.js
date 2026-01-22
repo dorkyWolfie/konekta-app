@@ -32,7 +32,7 @@ export default async function MobileSidebar() {
     <div className="mobileMenu">
       {Page && (
         <Link target="_blank" href={'/' + Page.uri} className="flex flex-col items-center gap-1">
-          <Image src={getSafeImageSrc(session.user.image)} width={256} height={256} alt={"avatar"} className="w-12 h-12 object-cover rounded-full overflow-hidden" />
+          <Image src={getSafeImageSrc(session.user.image)} width={256} height={256} alt={"avatar"} className="w-10 h-10 object-cover rounded-full overflow-hidden" />
         </Link>
       )}
       <AppSidebar />

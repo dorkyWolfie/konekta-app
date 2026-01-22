@@ -149,7 +149,7 @@ export default async function UserPage({params, searchParams}) {
       <div className="w-full h-screen fixed z-[-10] absolute top-0" style={{background: Page.bgColorPage}} />
       {/* bg color or image set from account above the avatar image */}
       <div 
-        className="h-80 max-sm:h-60 bg-[#dbeafe] bg-cover bg-center"
+        className="h-100 max-sm:h-60 bg-${Page.bgColorPage} sm:bg-contain bg-cover bg-no-repeat bg-center"
         style={
           Page.bgType === 'color'
             ? { backgroundColor: Page.bgColor }
@@ -158,7 +158,7 @@ export default async function UserPage({params, searchParams}) {
       </div>
       {/* avatar image */}
       <Image src={getSafeImageSrc(User.image)} width={130} height={130} alt={"avatar"} className="rounded-full bg-white border-4 border-white shadow shadow-black/50 aspect-square object-cover mx-auto -mt-16" />
-      <div className="max-w-2xl mx-auto px-4 pb-18">
+      <div className="max-w-3xl mx-auto px-4 pb-18">
         {/* personal info */}
         <div className="flex flex-col items-center mt-4">
           <h2 className="text-2xl font-bold" style={{ color: textColor1 }}>{content.displayName}</h2>
@@ -182,7 +182,7 @@ export default async function UserPage({params, searchParams}) {
               <span className="flex flex-row items-center gap-2 mt-1 mb-1 text-sm"><FontAwesomeIcon icon={faLocationDot} width={10} /> {content.location}</span>
             )}
           </h3>
-          <p className="max-w-md mx-auto text-center text-md" style={{ color: textColor2 }}>{content.bio}</p>
+          <p className="text-left text-md" style={{ color: textColor2 }}>{content.bio}</p>
         </div>
         {/* Buttons section */}
         {activeButtons.length > 0 && (
@@ -198,7 +198,7 @@ export default async function UserPage({params, searchParams}) {
                 {button.icon ? (
                   <Image src={button.icon} alt={button.title || button.type} width={24} height={24} className="w-6 h-6 object-contain" />
                 ) : (
-                  <FontAwesomeIcon icon={icons[getButtonType(button.type)] || (button.isCustom ? faUser : faGlobe)} className="w-6 h-6" />
+                  <FontAwesomeIcon icon={icons[getButtonType(button.type)] || (button.isCustom ? faUser : faGlobe)} className="text-xl" />
                 )}
               </Link>
             ))}
@@ -213,12 +213,12 @@ export default async function UserPage({params, searchParams}) {
               target="_blank" 
               href={link.url} 
               className="bg-white/75 shadow-sm p-2 flex gap-4 items-center hover:bg-white/90 transition-colors" >
-              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square !p-2 w-15 h-15 flex justify-center items-center">
+              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square !p-1 w-15 h-15 flex justify-center items-center">
                 {link.icon && (
                   <Image src={link.icon} alt={'icon'} width={256} height={256} className="w-full h-full object-contain" />
                 )}
                 {!link.icon && (
-                  <FontAwesomeIcon icon={faLink} width={50} height={50} className="text-xl object-cover" />
+                  <FontAwesomeIcon icon={faLink} width={50} height={50} className="text-2xl object-contain" />
                 )}
               </div>
               <div>
@@ -237,11 +237,11 @@ export default async function UserPage({params, searchParams}) {
               target="_blank" 
               href={file.url} 
               className="bg-white/75 shadow-sm p-2 flex gap-4 items-center hover:bg-white/90 transition-colors" >
-              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 !p-2 flex justify-center items-center">
+              <div className="corner-border !border-[rgba(100,100,100,0.25)] aspect-square w-15 h-15 !p-1 flex justify-center items-center">
                 {file.url && file.type === 'application/pdf' && (
-                  <FontAwesomeIcon icon={faFilePdf} width={50} height={50} className="text-xl object-cover" />
+                  <FontAwesomeIcon icon={faFilePdf} width={50} height={50} className="text-2xl object-cover" />
                 ) || (
-                  <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-cover" width={256} height={256} />
+                  <Image src={file.url} alt={file.title || 'uploaded file'} className="w-full h-full object-contain" width={256} height={256} />
                 )}
               </div>
               <div>
