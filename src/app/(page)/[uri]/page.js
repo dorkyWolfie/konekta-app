@@ -255,21 +255,12 @@ export default async function UserPage({params, searchParams}) {
       <div className="contactDiv">
         <div className="relative group">
           <SaveContact uri={Page.uri} lang={lang} className="button-1 shadow mobButton" />
-          <div className="sm:hidden absolute bottom-full left-0 mb-2 px-3 py-2 bg-blue-700 text-white text-sm whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {mButton3}
-          </div>
         </div>
         <div className="relative group">
           <ExchangeContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow mobButton" />
-          <div className="sm:hidden absolute bottom-full left-0 mb-2 px-3 py-2 bg-blue-700 text-white text-sm whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {mButton2.buttonText}
-          </div>
         </div>
         <div className="relative group buttonDiv">
           <ShareContactButton page={JSON.parse(JSON.stringify(Page))} user={JSON.parse(JSON.stringify(User))} lang={lang} className="button-1 shadow cursor-pointer mobButton" />
-          <div className="sm:hidden absolute bottom-full right-0 mb-2 px-3 py-2 bg-blue-700 text-white text-sm whitespace-nowrap z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            {mButton1.buttonText}
-          </div>
         </div>
       </div>
     </main>
