@@ -28,14 +28,15 @@ function validateLinksData(links) {
   const validatedLinks = links.map((link, index) => {
     const linkErrors = [];
 
-    // Check required fields 
-    if (!link.title || typeof link.title !== 'string') {
-      linkErrors.push(`Link ${index + 1}: Title is required and must be a string`);
-    } else 
-    if (link.title.trim().length === 0) {
-      linkErrors.push(`Link ${index + 1}: Title cannot be empty`);
-    } else if (link.title.trim().length > LINK_SCHEMA.title.maxLength) {
+    // Check title field
+    if (link.title && typeof link.title !== 'string') {
+      linkErrors.push(`Link ${index + 1}: Title must be a string`);
+    } else if (link.title && link.title.trim().length > LINK_SCHEMA.title.maxLength) {
       linkErrors.push(`Link ${index + 1}: Title exceeds maximum length`);
+    }
+    // Require at least one of title (MK) or title_en (EN)
+    if ((!link.title || link.title.trim().length === 0) && (!link.title_en || link.title_en.trim().length === 0)) {
+      linkErrors.push(`Link ${index + 1}: Either a MK or EN title is required`);
     }
 
     if (!link.url || typeof link.url !== 'string') {

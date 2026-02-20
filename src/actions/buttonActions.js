@@ -51,12 +51,14 @@ function validateButtonsData(buttonsData) {
       buttonErrors.push(`Button ${index + 1}: Invalid button type "${button.type}"`);
     }
 
-    if (!button.title || typeof button.title !== 'string') {
-      buttonErrors.push(`Button ${index + 1}: Title is required and must be a string`);
-    } else if (button.title.trim().length === 0) {
-      buttonErrors.push(`Button ${index + 1}: Title cannot be empty`);
-    } else if (button.title.trim().length > BUTTON_SCHEMA.title.maxLength) {
+    if (button.title && typeof button.title !== 'string') {
+      buttonErrors.push(`Button ${index + 1}: Title must be a string`);
+    } else if (button.title && button.title.trim().length > BUTTON_SCHEMA.title.maxLength) {
       buttonErrors.push(`Button ${index + 1}: Title exceeds maximum length`);
+    }
+    // Require at least one of title (MK) or title_en (EN)
+    if ((!button.title || button.title.trim().length === 0) && (!button.title_en || button.title_en.trim().length === 0)) {
+      buttonErrors.push(`Button ${index + 1}: Either a MK or EN title is required`);
     }
 
     if (!button.value || typeof button.value !== 'string') {

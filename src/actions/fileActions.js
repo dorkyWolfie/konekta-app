@@ -42,13 +42,15 @@ function validateFilesData(files) {
   const validatedFiles = files.map((file, index) => {
     const fileErrors = [];
 
-    // Check required title
-    if (!file.title || typeof file.title !== 'string') {
-      fileErrors.push(`File ${index + 1}: Title is required and must be a string`);
-    } else if (file.title.trim().length === 0) {
-      fileErrors.push(`File ${index + 1}: Title cannot be empty`);
-    } else if (file.title.trim().length > FILE_SCHEMA.title.maxLength) {
+    // Check title field
+    if (file.title && typeof file.title !== 'string') {
+      fileErrors.push(`File ${index + 1}: Title must be a string`);
+    } else if (file.title && file.title.trim().length > FILE_SCHEMA.title.maxLength) {
       fileErrors.push(`File ${index + 1}: Title exceeds maximum length of ${FILE_SCHEMA.title.maxLength} characters`);
+    }
+    // Require at least one of title (MK) or title_en (EN)
+    if ((!file.title || file.title.trim().length === 0) && (!file.title_en || file.title_en.trim().length === 0)) {
+      fileErrors.push(`File ${index + 1}: Either a MK or EN title is required`);
     }
 
     // Check required fileUrl
