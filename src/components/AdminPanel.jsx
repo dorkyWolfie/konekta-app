@@ -287,7 +287,12 @@ export default function AdminPanel() {
                           <User className="text-blue-600" size={20} />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{user.name || 'No name'}</div>
+                          <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
+                            {user.name || 'No name'}
+                            {user.pageUri && (
+                              <span className="text-xs text-blue-600 font-normal">/{user.pageUri}</span>
+                            )}
+                          </div>
                           <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
                       </div>
