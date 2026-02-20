@@ -2,8 +2,10 @@
 import LoadingButton from '@/components/buttons/loadingButton';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { websiteTranslations } from '@/lib/i18n';
 
-export default function ContactForm() {
+export default function ContactForm({ lang = 'mk' }) {
+  const t = websiteTranslations[lang] || websiteTranslations.mk;
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({ ime: '', prezime: '', email: '', telefon: '', poraka: '' });
@@ -22,9 +24,9 @@ export default function ContactForm() {
     setSuccess(res.ok);
     if (res.ok) {
       setFormData({ ime: '', prezime: '', email: '', telefon: '', poraka: '' });
-      toast.success('Пораката е успешно испратена!');
+      toast.success(t.contactSuccess);
     } else {
-      toast.error('Се појави грешка. Ве молиме обидете се повторно.');
+      toast.error(t.contactError);
     }
     setLoading(false);
   };
@@ -34,28 +36,28 @@ export default function ContactForm() {
       <div className="flex flex-col gap-4">
         <div className="flex flex-row gap-6 justify-between">
           <div className="input-div w-1/2">
-            <label>Име*</label>
+            <label>{t.contactFirstName}</label>
             <input name="ime" type="text" value={formData.ime} onChange={handleChange} required />
           </div>
           <div className="input-div w-1/2">
-            <label>Презиме*</label>
+            <label>{t.contactLastName}</label>
             <input name="prezime" type="text" value={formData.prezime} onChange={handleChange} required />
           </div>
         </div>
         <div className="input-div">
-          <label>E-mail*</label>
+          <label>{t.contactEmailLabel}</label>
           <input name="email" type="email" value={formData.email} onChange={handleChange} required />
         </div>
         <div className="input-div">
-          <label>Телефонски број</label>
+          <label>{t.contactPhone}</label>
           <input name="telefon" type="text" value={formData.telefon} onChange={handleChange} />
         </div>
         <div className="input-div">
-          <label>Порака</label>
+          <label>{t.contactMessage}</label>
           <textarea name="poraka" value={formData.poraka} onChange={handleChange} required />
         </div>
       </div>
-      <LoadingButton type="submit" isLoading={loading} loadingText="Се испраќа..." >Испрати</LoadingButton>
+      <LoadingButton type="submit" isLoading={loading} loadingText={t.contactSending}>{t.contactSend}</LoadingButton>
     </form>
   );
 }

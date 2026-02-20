@@ -7,24 +7,24 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { page } from "@/models/page";
 
-export default async function MobileSidebar() {
+export default async function MobileSidebar({ lang = 'mk' }) {
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
     redirect("/");
   }
 
   mongoose.connect(process.env.MONGO_URI);
   const Page = await page.findOne({owner: session.user.email});
-  
+
   function getSafeImageSrc(src) {
     if (typeof src !== "string") return "/user-astronaut-solid-full.webp";
-  
+
     // Allow only if it's a valid URL or starts with /
     if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
       return src;
     }
-  
+
     return "/user-astronaut-solid-full.webp";
   }
 
@@ -35,7 +35,7 @@ export default async function MobileSidebar() {
           <Image src={getSafeImageSrc(session.user.image)} width={256} height={256} alt={"avatar"} className="w-10 h-10 object-cover rounded-full overflow-hidden" />
         </Link>
       )}
-      <AppSidebar />
+      <AppSidebar lang={lang} />
     </div>
   );
 }

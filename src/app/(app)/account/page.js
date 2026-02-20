@@ -12,6 +12,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
+import { headers } from "next/headers";
+import { detectLangFromHeaders, appTranslations } from "@/lib/i18n";
 
 export default async function AccountPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
@@ -23,6 +25,10 @@ export default async function AccountPage({ searchParams }) {
     redirect("/");
   }
 
+  const headersList = await headers();
+  const lang = detectLangFromHeaders(headersList);
+  const t = appTranslations[lang];
+
   mongoose.connect(process.env.MONGO_URI);
   const User = await user.findOne({ email: session?.user?.email }).lean();
   const Page = await page.findOne({owner: session?.user?.email});
@@ -30,8 +36,8 @@ export default async function AccountPage({ searchParams }) {
   if (!Page) {
     return (
       <SectionBox>
-        <UsernameForm desiredUsername={desiredUsername} />
-        <p className="max-w-lg mx-auto mt-4 p-4 bg-red-50 border-2 border-red-400">Корисничкото име мора да биде на латиница и не треба да содржи празно место и знаци. <br />Може да се користат бројки. <br />Пр. ime_prezime, ime-prezime, imePrezime, ime123 </p>
+        <UsernameForm desiredUsername={desiredUsername} lang={lang} />
+        <p className="max-w-lg mx-auto mt-4 p-4 bg-red-50 border-2 border-red-400">{t.usernameValidation}</p>
       </SectionBox>
     );
   }
@@ -51,8 +57,8 @@ export default async function AccountPage({ searchParams }) {
         </>
       ) : (
         <SectionBox>
-          <h2>Немате активен профил</h2>
-          <p>Доколку сакате да го активирате профилот <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
+          <h2>{t.noActiveProfile}</h2>
+          <p>{t.activateProfileLink} <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">{t.clickHere}</Link></p>
         </SectionBox>
       )}
     </>

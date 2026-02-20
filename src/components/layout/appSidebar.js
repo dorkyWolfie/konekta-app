@@ -1,55 +1,60 @@
 'use client';
 import Link from "next/link";
 import LogoutButton from "@/components/buttons/logoutButton";
+import LangSwitcher from "@/components/ui/langSwitcher";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { faFileLines, faAddressCard, faAddressBook } from "@fortawesome/free-regular-svg-icons";
 import { usePathname } from "next/navigation";
+import { appTranslations } from "@/lib/i18n";
 
-export default function AppSidebar() {
+export default function AppSidebar({ lang = 'mk' }) {
+  const t = appTranslations[lang] || appTranslations.mk;
   const path = usePathname();
 
   return (
     <nav className="inline-flex mx-auto items-start flex-col mt-8 sm:gap-6 gap-4">
-      <Link href={'/account'} 
-      className={"sidebarLink" 
+      <Link href={'/account'}
+      className={"sidebarLink"
         + (path === '/account' ? '!text-[#3b82f6] font-[900] flex items-center gap-4 mobileActive' : '')} >
-        <FontAwesomeIcon 
-          icon={faFileLines} 
+        <FontAwesomeIcon
+          icon={faFileLines}
           className="w-6 h-6" />
-        <span>Профил</span>
+        <span>{t.navProfile}</span>
       </Link>
-      <Link href={'/analytics'} 
-        className={"sidebarLink" 
+      <Link href={'/analytics'}
+        className={"sidebarLink"
         + (path === '/analytics' ? '!text-[#3b82f6] font-[900] flex items-center gap-4 mobileActive' : '')}>
-        <FontAwesomeIcon 
-          icon={faChartLine} 
+        <FontAwesomeIcon
+          icon={faChartLine}
           className="w-6 h-6" />
-        <span>Аналитика</span>
+        <span>{t.navAnalytics}</span>
       </Link>
-      <Link href={'/contacts'} 
-        className={"sidebarLink" 
+      <Link href={'/contacts'}
+        className={"sidebarLink"
         + (path === '/contacts' ? '!text-[#3b82f6] font-[900] flex items-center gap-4 mobileActive' : '')} >
-        <FontAwesomeIcon 
-          icon={faAddressBook} 
+        <FontAwesomeIcon
+          icon={faAddressBook}
           className="w-6 h-6" />
-        <span>Контакти</span>
+        <span>{t.navContacts}</span>
       </Link>
-      <LogoutButton 
+      <LogoutButton
         iconLeft={true}
         className={"sidebarLink"}
         iconClasses={'w-6 h-6'}
+        label={t.navLogout}
       />
       <Link href={'/'} className="sidebarLink sidebarLink2 pt-6 mt-2 border-t-2 border-[#e5e7eb]">
         <FontAwesomeIcon icon={faArrowLeft} className={"w-3 h-3"} />
-        <span>Назад кон почетна</span>
+        <span>{t.navBackToHome}</span>
       </Link>
       <Link href={'https://konekta.mk'} className="sidebarLink sidebarLink2">
-        <FontAwesomeIcon 
+        <FontAwesomeIcon
           icon={faAddressCard}
           className={"w-3 h-3"} />
-        <span>конекта.мк</span>
+        <span>{t.navKonekta}</span>
       </Link>
+      <LangSwitcher lang={lang} />
     </nav>
   )
 }

@@ -9,6 +9,8 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faBuilding, faBriefcase, faEnvelope, faPhone, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { headers } from "next/headers";
+import { detectLangFromHeaders, appTranslations } from "@/lib/i18n";
 
 export default async function ContactsPage() {
   mongoose.connect(process.env.MONGO_URI);
@@ -18,13 +20,17 @@ export default async function ContactsPage() {
     return redirect('/');
   }
 
+  const headersList = await headers();
+  const lang = detectLangFromHeaders(headersList);
+  const t = appTranslations[lang];
+
   const User = await user.findOne({ email: session.user.email }).lean();
 
   if (!User || User.subscriptionStatus !== 'pro') {
     return (
       <SectionBox>
-        <h2>Контактите не се достапни</h2>
-        <p>Овој профил не е активиран. Доколку сакате да го активирате или мислите дека е грешка ве молиме <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
+        <h2>{t.contactsUnavailable}</h2>
+        <p>{t.profileNotActivated} <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">{t.clickHere}</Link></p>
       </SectionBox>
     )
   }
@@ -42,7 +48,7 @@ export default async function ContactsPage() {
   });
 
   const formatDate = (date) => {
-    return new Date(date).toLocaleString('mk-MK', {
+    return new Date(date).toLocaleString(lang === 'en' ? 'en-US' : 'mk-MK', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -53,7 +59,7 @@ export default async function ContactsPage() {
 
   return (
     <SectionBox>
-      <h2 className="text-xl mb-6 font-bold text-center">Примени Контакти</h2>
+      <h2 className="text-xl mb-6 font-bold text-center">{t.receivedContacts}</h2>
       {contacts.length > 0 ? (
         <div className="space-y-4">
           {contacts.map((contactItem) => (
@@ -116,10 +122,8 @@ export default async function ContactsPage() {
         </div>
       ) : (
         <div className="text-center py-8">
-          <p className="text-[#6b7280] text-lg">Немате примени контакти</p>
-          <p className="text-sm text-[#9ca3af] mt-2">
-            Контактите ќе се појават овде кога некој ќе ги прати преку вашата страница
-          </p>
+          <p className="text-[#6b7280] text-lg">{t.noContactsReceived}</p>
+          <p className="text-sm text-[#9ca3af] mt-2">{t.contactsWillAppear}</p>
         </div>
       )}
 
@@ -127,7 +131,7 @@ export default async function ContactsPage() {
       {contacts.length > 0 && (
         <div className="mt-6 p-4 bg-[#f9fafb] rounded-lg">
           <p className="text-sm text-[#4b5563]">
-            <strong>Вкупно контакти:</strong> {contacts.length}
+            <strong>{t.totalContacts}</strong> {contacts.length}
           </p>
         </div>
       )}

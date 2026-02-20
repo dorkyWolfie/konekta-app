@@ -13,6 +13,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faGlobe, faUser, faFilePdf } from "@fortawesome/free-solid-svg-icons";
 import { isToday } from "date-fns";
 import { getButtonType, icons } from "@/app/(page)/[uri]/page";
+import { headers } from "next/headers";
+import { detectLangFromHeaders, appTranslations } from "@/lib/i18n";
 
 export default async function AnalyticsPage() {
   mongoose.connect(process.env.MONGO_URI);
@@ -22,9 +24,13 @@ export default async function AnalyticsPage() {
     return redirect('/');
   }
 
+  const headersList = await headers();
+  const lang = detectLangFromHeaders(headersList);
+  const t = appTranslations[lang];
+
   const User = await user.findOne({ email: session.user.email }).lean();
   const Page = await page.findOne({ owner: session?.user?.email });
-  
+
   const groupedViews = await event.aggregate([
     {
       $match: {
@@ -62,8 +68,8 @@ export default async function AnalyticsPage() {
   if (!User || User.subscriptionStatus !== 'pro') {
     return (
       <SectionBox>
-        <h2>Аналитика не е достапна</h2>
-        <p>Овој профил не е активиран. Доколку сакате да го активирате или мислите дека е грешка ве молиме <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
+        <h2>{t.analyticsUnavailable}</h2>
+        <p>{t.profileNotActivated} <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">{t.clickHere}</Link></p>
       </SectionBox>
     )
   }
@@ -75,14 +81,14 @@ export default async function AnalyticsPage() {
   return (
     <div className="shrink">
       <SectionBox>
-        <h2 className="text-xl mb-6 font-bold text-center">Прегледи</h2>
+        <h2 className="text-xl mb-6 font-bold text-center">{t.views}</h2>
         <Chart data={groupedViews.map(o => ({
-          'date': o._id, 
+          'date': o._id,
           'views': o.count
         }))} />
       </SectionBox>
       <SectionBox>
-        <h2 className="text-xl mb-6 font-bold text-center">Кликови од Копчиња</h2>
+        <h2 className="text-xl mb-6 font-bold text-center">{t.buttonClicks}</h2>
         {Page.buttons.map(button => {
           const today = buttonClicks.filter(c => c.uri === button.value && isToday(c.createdAt)).length;
           const total = buttonClicks.filter(c => c.uri === button.value).length;
@@ -90,20 +96,20 @@ export default async function AnalyticsPage() {
             <div key={button.key} className="flex gap-6 items-center justify-center border-t border-[#e5e7eb] py-4">
               <div className="text-[#3b82f6] pl-4">
                 {button.icon ? (
-                  <Image 
-                    src={button.icon} alt={button.title || button.type} 
-                    width={24} height={24} className="w-6 h-6 object-contain" 
+                  <Image
+                    src={button.icon} alt={button.title || button.type}
+                    width={24} height={24} className="w-6 h-6 object-contain"
                   />
                 ) : (
-                  <FontAwesomeIcon 
-                    icon={icons[getButtonType(button.type)] || (button.isCustom ? faUser : faGlobe)} className="w-6 h-6" 
+                  <FontAwesomeIcon
+                    icon={icons[getButtonType(button.type)] || (button.isCustom ? faUser : faGlobe)} className="w-6 h-6"
                   />
                 )}
               </div>
               <div className="grow">
                 <h3>
-                  <span className="block sm:hidden text-wrap">{truncateText(button.title || 'Нема наслов', 10)}</span>
-                  <span className="hidden sm:block">{button.title || 'Нема наслов'}</span>
+                  <span className="block sm:hidden text-wrap">{truncateText(button.title || t.noTitle, 10)}</span>
+                  <span className="hidden sm:block">{button.title || t.noTitle}</span>
                 </h3>
                 <Link target="_blank" href={button.value} className="text-[#1d4ed8] text-xs">
                   <span className="block sm:hidden text-wrap smallLink">{truncateText(button.value, 20)}</span>
@@ -113,11 +119,11 @@ export default async function AnalyticsPage() {
               <div className="text-center flex items-center justify-center gap-4">
                 <div className="flex flex-col gap-2">
                   <span className="text-xl">{today}</span>
-                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Денес:</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">{t.today}</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-xl">{total}</span>
-                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Вкупно:</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">{t.total}</span>
                 </div>
               </div>
             </div>
@@ -125,7 +131,7 @@ export default async function AnalyticsPage() {
         })}
       </SectionBox>
       <SectionBox>
-        <h2 className="text-xl mb-6 font-bold text-center">Кликови од Линкови</h2>
+        <h2 className="text-xl mb-6 font-bold text-center">{t.linkClicks}</h2>
         {Page.links.map(link => {
           const today = linkClicks.filter(c => c.uri === link.url && isToday(c.createdAt)).length;
           const total = linkClicks.filter(c => c.uri === link.url).length;
@@ -133,17 +139,16 @@ export default async function AnalyticsPage() {
             <div key={link.title} className="flex gap-6 items-center justify-center border-t border-[#e5e7eb] py-4">
               <div className="text-[#3b82f6] pl-4">
                 {link.icon ? (
-                  <Image 
-                    src={link.icon} alt={link.title} 
-                    width={24} height={24} className="w-6 h-6 object-contain" 
-                  />
-                  ) : ( <FontAwesomeIcon icon={faLink} className="w-6 h-6" />
+                  <Image
+                    src={link.icon} alt={link.title}
+                    width={24} height={24} className="w-6 h-6 object-contain"
+                  /> ) : ( <FontAwesomeIcon icon={faLink} className="w-6 h-6" />
                 )}
               </div>
               <div className="grow">
                 <h3>
-                  <span className="block sm:hidden text-wrap">{truncateText(link.title || 'Нема наслов', 10)}</span>
-                  <span className="hidden sm:block">{link.title || 'Нема наслов'}</span>
+                  <span className="block sm:hidden text-wrap">{truncateText(link.title || t.noTitle, 10)}</span>
+                  <span className="hidden sm:block">{link.title || t.noTitle}</span>
                 </h3>
                 <Link target="_blank" href={link.url} className="text-[#1d4ed8] text-xs">
                   <span className="block sm:hidden text-wrap smallLink">{truncateText(link.url, 30)}</span>
@@ -153,11 +158,11 @@ export default async function AnalyticsPage() {
               <div className="text-center flex items-center justify-center gap-4">
                 <div className="flex flex-col gap-2">
                   <span className="text-xl">{today}</span>
-                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Денес:</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">{t.today}</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-xl">{total}</span>
-                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Вкупно:</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">{t.total}</span>
                 </div>
               </div>
             </div>
@@ -165,7 +170,7 @@ export default async function AnalyticsPage() {
         })}
       </SectionBox>
       <SectionBox>
-        <h2 className="text-xl mb-6 font-bold text-center">Кликови од Датотеки</h2>
+        <h2 className="text-xl mb-6 font-bold text-center">{t.fileClicks}</h2>
         {Page.files.map(file => {
           const today = fileClicks.filter(c => c.uri === file.url && isToday(c.createdAt)).length;
           const total = fileClicks.filter(c => c.uri === file.url).length;
@@ -180,9 +185,9 @@ export default async function AnalyticsPage() {
               </div>
               <div className="grow">
                 <h3>
-                  <span className="block sm:hidden text-wrap">{truncateText(file.title || 'Нема наслов', 10)}</span>
-                  <span className="hidden sm:block">{file.title || 'Нема наслов'}</span>
-                  </h3>
+                  <span className="block sm:hidden text-wrap">{truncateText(file.title || t.noTitle, 10)}</span>
+                  <span className="hidden sm:block">{file.title || t.noTitle}</span>
+                </h3>
                 <Link target="_blank" href={file.url} title={file.url} className="text-[#1d4ed8] text-xs">
                   <span className="block sm:hidden smallLink">{truncateText(file.url, 30)}</span>
                   <span className="hidden sm:block">{file.url}</span>
@@ -191,11 +196,11 @@ export default async function AnalyticsPage() {
               <div className="text-center flex items-center justify-center gap-4">
                 <div className="flex flex-col gap-2">
                   <span className="text-xl">{today}</span>
-                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Денес:</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">{t.today}</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   <span className="text-xl">{total}</span>
-                  <span className="text-[#9ca3af] text-xs uppercase font-bold">Вкупно:</span>
+                  <span className="text-[#9ca3af] text-xs uppercase font-bold">{t.total}</span>
                 </div>
               </div>
             </div>

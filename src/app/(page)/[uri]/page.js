@@ -125,7 +125,7 @@ export default async function UserPage({params, searchParams}) {
     return (
       <SectionBox>
         <h2>{messages.noActiveProfile}</h2>
-        <p>{messages.activateProfile} <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">кликнете тука</Link></p>
+        <p>{messages.activateProfile} <Link href="/kontakt" className="text-[#2563eb] hover:[#1d4ed8] hover:underline">{messages.activateHere}</Link></p>
       </SectionBox>
     )
   }

@@ -1,11 +1,13 @@
 'use client';
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from 'react-hot-toast';
 import LoadingButton from "@/components/buttons/loadingButton";
+import { websiteTranslations } from "@/lib/i18n";
 
-export default function SignInForm() {
+export default function SignInForm({ lang = 'mk' }) {
+  const t = websiteTranslations[lang] || websiteTranslations.mk;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,17 +24,15 @@ export default function SignInForm() {
       });
 
       if (res?.ok && res?.url) {
-        toast.success('Успешно се најавивте!');
-        // Small delay to show success message before redirect
+        toast.success(t.signInSuccess);
         setTimeout(() => {
           window.location.href = res.url;
         }, 200);
       } else if (res?.error) {
- 
-        toast.error('Погрешна е-пошта или лозинка.');
+        toast.error(t.signInWrongCreds);
       }
     } catch (error) {
-      toast.error('Се појави грешка. Ве молиме обидете се повторно.');
+      toast.error(t.generalError);
     } finally {
       setIsLoading(false);
     }
@@ -42,15 +42,15 @@ export default function SignInForm() {
     <div className="w-full mx-auto">
       <form onSubmit={handleSubmit} className="space-y-2">
         <div className="input-div">
-          <label htmlFor="email">Е-пошта</label>
-          <input id="email" name="email" type="email" required disabled={isLoading} placeholder="Е-пошта" />
+          <label htmlFor="email">{t.emailLabel}</label>
+          <input id="email" name="email" type="email" required disabled={isLoading} placeholder={t.emailPlaceholder} />
         </div>
         <div className="input-div pb-1">
-          <label htmlFor="password">Лозинка</label>
-          <input id="password" name="password" type="password" required disabled={isLoading} placeholder="Лозинка" />
+          <label htmlFor="password">{t.passwordLabel}</label>
+          <input id="password" name="password" type="password" required disabled={isLoading} placeholder={t.passwordPlaceholder} />
         </div>
-        <LoadingButton type="submit" isLoading={isLoading} loadingText="Ве најавува..." >
-          Најави се
+        <LoadingButton type="submit" isLoading={isLoading} loadingText={t.signingIn}>
+          {t.signInBtn}
         </LoadingButton>
       </form>
     </div>
