@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { NextResponse } from 'next/server';
 import { page } from '@/models/page';
 import { user } from '@/models/user';
-import { getLocalizedContent } from '@/lib/i18n';
+import { getLocalizedContent, resolveLang } from '@/lib/i18n';
 
 export function cyrillicToLatin(text) {
   const map = {
@@ -69,7 +69,6 @@ function getButtonValue(buttons, buttonType) {
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
   const uri = searchParams.get('uri');
-  const lang = searchParams.get('lang') === 'en' ? 'en' : 'mk';
 
   if (!uri) {
     return new NextResponse('Missing uri parameter', { status: 400 });
@@ -78,6 +77,8 @@ export async function GET(req) {
   await mongoose.connect(process.env.MONGO_URI);
   const Page = await page.findOne({ uri });
   const User = await user.findOne({ email: Page.owner });
+
+  const lang = resolveLang(Page, searchParams.get('lang'));
 
   if (!Page) {
     return new NextResponse('Page not found', { status: 404 });

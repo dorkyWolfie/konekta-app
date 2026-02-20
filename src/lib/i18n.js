@@ -1,3 +1,40 @@
+// Check if a page has any English translation content
+export function hasEnglishContent(page) {
+  if (!page) return false;
+  return !!(
+    page.displayName_en ||
+    page.company_en ||
+    page.position_en ||
+    page.location_en ||
+    page.bio_en ||
+    (page.buttons && page.buttons.some(b => b.title_en)) ||
+    (page.links && page.links.some(l => l.title_en || l.subtitle_en)) ||
+    (page.files && page.files.some(f => f.title_en || f.description_en))
+  );
+}
+
+// Check if a page has any Macedonian content
+export function hasMacedonianContent(page) {
+  if (!page) return false;
+  return !!(
+    page.displayName ||
+    page.company ||
+    page.position ||
+    page.location ||
+    page.bio ||
+    (page.buttons && page.buttons.some(b => b.title)) ||
+    (page.links && page.links.some(l => l.title || l.subtitle)) ||
+    (page.files && page.files.some(f => f.title || f.description))
+  );
+}
+
+// Resolve the effective language: default to 'en' if English content exists, else 'mk'
+export function resolveLang(page, requestedLang) {
+  if (requestedLang === 'mk') return 'mk';
+  if (requestedLang === 'en') return 'en';
+  return hasEnglishContent(page) ? 'en' : 'mk';
+}
+
 // Get localized content based on language
 export function getLocalizedContent(page, lang = 'mk') {
   if (lang === 'en') {

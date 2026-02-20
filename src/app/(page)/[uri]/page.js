@@ -9,7 +9,7 @@ import ShareContactButton from "@/components/buttons/shareContactButton";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
 import { event } from "@/models/event";
-import { getLocalizedContent, errorMessages, shareContactMessages, contactMessages } from "@/lib/i18n";
+import { getLocalizedContent, resolveLang, errorMessages, shareContactMessages, contactMessages } from "@/lib/i18n";
 import { getTextColors } from '@/utils/colorUtils';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLink, faLocationDot, faPhone, faEnvelope, faBriefcase, faGlobe, faUser, faFilePdf, faBuilding } from "@fortawesome/free-solid-svg-icons";
@@ -99,16 +99,13 @@ export default async function UserPage({params, searchParams}) {
   const resolvedParams = await params;
   const resolvedSearchParams = await searchParams;
   const uri = resolvedParams.uri;
-  const lang = resolvedSearchParams.lang === 'en' ? 'en' : 'mk'; // Get from query parameter
 
   await mongoose.connect(process.env.MONGO_URI);
 
   const Page = await page.findOne({uri}).lean();
-  const User = await user.findOne({email: Page?.owner}).lean();
-
-  await event.create({uri:uri, page:uri, type:"view"});
 
   if (!Page) {
+    const lang = resolveLang(null, resolvedSearchParams.lang);
     const messages = errorMessages[lang];
     return (
       <SectionBox className="p-8 !text-center !text-[#ef4444]">
@@ -118,7 +115,12 @@ export default async function UserPage({params, searchParams}) {
     );
   }
 
+  const User = await user.findOne({email: Page.owner}).lean();
+
+  await event.create({uri:uri, page:uri, type:"view"});
+
   if (!User || User.subscriptionStatus !== 'pro') {
+    const lang = resolveLang(Page, resolvedSearchParams.lang);
     const messages = errorMessages[lang];
     return (
       <SectionBox>
@@ -128,6 +130,7 @@ export default async function UserPage({params, searchParams}) {
     )
   }
 
+  const lang = resolveLang(Page, resolvedSearchParams.lang);
   const content = getLocalizedContent(Page, lang);
   const mButton1 = shareContactMessages[lang];
   const mButton2 = contactMessages[lang];
