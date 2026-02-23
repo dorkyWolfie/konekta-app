@@ -7,8 +7,8 @@ import mongoose from "mongoose";
 import Link from "next/link";
 import { appTranslations } from "@/lib/i18n";
 
-export default async function Trial({ lang = 'mk' }) {
-  const t = appTranslations[lang] || appTranslations.mk;
+export default async function Trial({ lang = 'en' }) {
+  const t = appTranslations[lang] || appTranslations.en;
   const session = await getServerSession(authOptions);
 
   if (!session) {

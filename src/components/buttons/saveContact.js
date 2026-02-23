@@ -2,7 +2,7 @@
 import { faCloudArrowDown, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function SaveContact({ uri, lang = 'mk', className='' }) {
+export default function SaveContact({ uri, lang = 'en', className='' }) {
   const downloadVCard = async () => {
     const queryParams = new URLSearchParams({ uri });
     if (lang) {
@@ -24,7 +24,7 @@ export default function SaveContact({ uri, lang = 'mk', className='' }) {
     document.body.removeChild(link);
   };
 
-  const buttonText = lang === 'en' ? 'Save Contact' : 'Превземи контакт';
+  const buttonText = lang === 'mk' ? 'Превземи контакт' : 'Save Contact';
 
   return (
     <button onClick={downloadVCard} className={className}>

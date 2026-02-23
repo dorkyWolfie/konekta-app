@@ -4,6 +4,15 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { page } from "@/models/page";
 import { user } from "@/models/user";
+import { VALID_LANG_CODES } from "@/lib/languages";
+
+const TRANSLATION_FIELD_LENGTHS = {
+  displayName: 100,
+  company: 100,
+  position: 100,
+  location: 100,
+  bio: 500,
+};
 
 function validateInput(key, value) {
   const maxLengths = {
@@ -52,6 +61,12 @@ function validateInput(key, value) {
     return { isValid: false }; // Invalid value
   }
 
+  // Validate primaryLanguage
+  if (key === 'primaryLanguage') {
+    const validCodes = ['mk', ...VALID_LANG_CODES];
+    return validCodes.includes(value) ? { isValid: true, value } : { isValid: false };
+  }
+
   // Basic XSS prevention - strip HTML
   if (typeof value === 'string') {
     return { isValid: true, value: value.replace(/<[^>]*>/g, '') };
@@ -71,8 +86,9 @@ export async function savePageSettings(formData) {
 
     const dataKeys = [
       'displayName', 'company', 'position', 'location', 'bio', 'bgType', 'bgColorPage', 'bgColor', 'bgImage',
-      'displayName_en', 'company_en', 'position_en', 'location_en', 'bio_en', 'showEnglishTranslation'
+      'showEnglishTranslation', 'primaryLanguage'
     ];
+
     const dataToUpdate = {};
     
     for (const key of dataKeys) {
@@ -88,6 +104,50 @@ export async function savePageSettings(formData) {
         dataToUpdate[key] = validationResult.value !== undefined ? validationResult.value : rawValue;
       }
     }
+
+    // Handle enabledLanguages (JSON array — includes primary language)
+    if (formData.has('enabledLanguages')) {
+      try {
+        const langs = JSON.parse(formData.get('enabledLanguages'));
+        if (Array.isArray(langs)) {
+          // 'mk' is valid even though it's not in VALID_LANG_CODES (handled separately in languages.js)
+          dataToUpdate.enabledLanguages = langs.filter(l => l === 'mk' || VALID_LANG_CODES.includes(l));
+        }
+      } catch { /* ignore invalid JSON */ }
+    }
+
+    // Handle translations (JSON object: { langCode: { displayName, company, ... } })
+    // Also pack primary language flat fields into translations[primaryLang]
+    const primaryLang = dataToUpdate.primaryLanguage || 'mk';
+    let translationsMap = {};
+
+    if (formData.has('translations')) {
+      try {
+        const rawTrans = JSON.parse(formData.get('translations'));
+        if (rawTrans && typeof rawTrans === 'object') {
+          for (const [langCode, fields] of Object.entries(rawTrans)) {
+            if (langCode !== 'mk' && !VALID_LANG_CODES.includes(langCode)) continue;
+            if (!fields || typeof fields !== 'object') continue;
+            translationsMap[langCode] = {};
+            for (const [field, value] of Object.entries(fields)) {
+              if (!TRANSLATION_FIELD_LENGTHS[field]) continue;
+              if (typeof value !== 'string') continue;
+              translationsMap[langCode][field] = value.replace(/<[^>]*>/g, '').slice(0, TRANSLATION_FIELD_LENGTHS[field]);
+            }
+          }
+        }
+      } catch { /* ignore invalid JSON */ }
+    }
+
+    // Always write primary language flat fields into translations[primaryLang]
+    translationsMap[primaryLang] = {
+      displayName: (dataToUpdate.displayName || '').slice(0, 100),
+      company: (dataToUpdate.company || '').slice(0, 100),
+      position: (dataToUpdate.position || '').slice(0, 100),
+      location: (dataToUpdate.location || '').slice(0, 100),
+      bio: (dataToUpdate.bio || '').slice(0, 500),
+    };
+    dataToUpdate.translations = translationsMap;
 
     // Update page data
     const pageUpdateResult = await page.updateOne(

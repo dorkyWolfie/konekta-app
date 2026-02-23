@@ -121,7 +121,7 @@ export default async function UserPage({params, searchParams}) {
 
   if (!User || User.subscriptionStatus !== 'pro') {
     const lang = resolveLang(Page, resolvedSearchParams.lang);
-    const messages = errorMessages[lang];
+    const messages = errorMessages[lang] || errorMessages['en'];
     return (
       <SectionBox>
         <h2>{messages.noActiveProfile}</h2>
@@ -210,8 +210,8 @@ export default async function UserPage({params, searchParams}) {
         {/* Links section */}
         <div className="grid md:grid-cols-2 gap-4">
           {content.links.map(link => (
-            <Link 
-              key={link.title} 
+            <Link
+              key={link.key}
               ping={process.env.URL+'/api/click?url='+btoa(link.url)+'&page='+Page.uri}
               target="_blank" 
               href={link.url} 
@@ -234,8 +234,8 @@ export default async function UserPage({params, searchParams}) {
         {/* Files section */}
         <div className="grid md:grid-cols-2 gap-4 my-4">
           {content.files.map(file => (
-            <Link 
-              key={file.title} 
+            <Link
+              key={file.key}
               ping={process.env.URL+'/api/click?url='+btoa(file.url)+'&page='+Page.uri}
               target="_blank" 
               href={file.url} 

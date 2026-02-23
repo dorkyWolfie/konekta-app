@@ -7,9 +7,9 @@ import { faClose, faShareNodes } from "@fortawesome/free-solid-svg-icons";
 import PopUp from "@/components/layout/popup";
 import ShareContactForm from "@/components/forms/shareContactForm";
 
-export default function ShareContactButton({page, user, lang = 'mk', ...props}) {
+export default function ShareContactButton({page, user, lang = 'en', ...props}) {
   const [showShareContactForm, setShowShareContactForm] = useState(false);
-  const messages = shareContactMessages[lang];
+  const messages = shareContactMessages[lang] || shareContactMessages['en'];
 
   return (
     <>

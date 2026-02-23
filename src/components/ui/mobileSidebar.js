@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { page } from "@/models/page";
 
-export default async function MobileSidebar({ lang = 'mk' }) {
+export default async function MobileSidebar({ lang = 'en' }) {
   const session = await getServerSession(authOptions);
 
   if (!session) {

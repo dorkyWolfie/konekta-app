@@ -5,7 +5,8 @@ import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faGripLines, faPlus, faSave, faTrash, faEnvelope, faPhone, faGlobe, faUser, faComment } from "@fortawesome/free-solid-svg-icons";
 import { faInstagram, faFacebook, faTwitter, faLinkedin, faYoutube, faTiktok, faGithub, faWhatsapp, faDiscord, faTelegram } from "@fortawesome/free-brands-svg-icons";
-import { GB } from 'country-flag-icons/react/3x2';
+import FlagIcon from "@/components/FlagIcon";
+import { SUPPORTED_LANGUAGES } from "@/lib/languages";
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { upload } from "@/libs/upload";
@@ -67,7 +68,14 @@ export default function PageButtonsForm({ page, user }) {
 
   const [buttons, setButtons] = useState(initializeButtons);
   const [showAddMenu, setShowAddMenu] = useState(false);
-  const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
+
+  const primaryLang = page.primaryLanguage || 'mk';
+  // Non-primary languages only — primary content is in the main title input
+  const enabledLanguages = (
+    page.enabledLanguages?.length > 0
+      ? page.enabledLanguages
+      : page.showEnglishTranslation ? ['mk', 'en'] : ['mk']
+  ).filter(l => l !== primaryLang);
 
   async function save(formData) {
     try {
@@ -97,7 +105,6 @@ export default function PageButtonsForm({ page, user }) {
           key: customType,
           type: customType,
           title: 'Ново копче',
-          title_en: '',
           value: '',
           icon: '',
           isActive: true,
@@ -117,7 +124,6 @@ export default function PageButtonsForm({ page, user }) {
           key: `${buttonType}_${Date.now()}`,
           type: buttonType,
           title: BUTTON_TYPES[buttonType].label,
-          title_en: '',
           value: '',
           icon: '',
           isActive: true,
@@ -141,13 +147,19 @@ export default function PageButtonsForm({ page, user }) {
   }
 
   function handleButtonChange(keyOfButtonToChange, prop, value) {
-    setButtons(prev => {
-      return prev.map(button => 
-        button.key === keyOfButtonToChange 
-          ? { ...button, [prop]: value }
-          : button
-      );
-    });
+    setButtons(prev => prev.map(button => {
+      if (button.key !== keyOfButtonToChange) return button;
+      // Handle nested translations path: "translations.{langCode}.{field}"
+      if (prop.startsWith('translations.')) {
+        const parts = prop.split('.');
+        const langCode = parts[1];
+        const field = parts[2];
+        const translations = { ...(button.translations || {}) };
+        translations[langCode] = { ...(translations[langCode] || {}), [field]: value };
+        return { ...button, translations };
+      }
+      return { ...button, [prop]: value };
+    }));
   }
 
   function removeButton(buttonKeyToRemove) {
@@ -176,7 +188,6 @@ export default function PageButtonsForm({ page, user }) {
   return (
     <SectionBox>
       <form action={save}>
-        <input type="hidden" name="showEnglishTranslation" value={showEnglish} />
         <h2 className="text-2xl font-bold mb-4">Контакт</h2>
         <div className="mb-4">
           <button 
@@ -279,14 +290,20 @@ export default function PageButtonsForm({ page, user }) {
                           onChange={ev => handleButtonChange(button.key, 'title', ev.target.value)}
                           type="text" placeholder="Наслов на копчето"
                         />
-                        {showEnglish && (
-                          <input
-                            value={button.title_en || ''}
-                            onChange={ev => handleButtonChange(button.key, 'title_en', ev.target.value)}
-                            type="text" placeholder="English title"
-                            className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
-                          />
-                        )}
+                        {enabledLanguages.map(langCode => {
+                          const langInfo = SUPPORTED_LANGUAGES.find(l => l.code === langCode);
+                          if (!langInfo) return null;
+                          return (
+                            <input
+                              key={langCode}
+                              value={button.translations?.[langCode]?.title || ''}
+                              onChange={ev => handleButtonChange(button.key, `translations.${langCode}.title`, ev.target.value)}
+                              type="text"
+                              placeholder={`Наслов (${langInfo.name})`}
+                              className="mt-1 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-1 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                            />
+                          );
+                        })}
                       </div>
                       {/* url input */}
                       <div>
@@ -321,28 +338,23 @@ export default function PageButtonsForm({ page, user }) {
           </div>
         )}
 
-        {/* English Translation Toggle */}
-        <div className="border-t pt-4 mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <span className="font-medium text-[#374151] flex items-center gap-1"><GB className="w-4 h-3" /> Додади Англиски превод</span>
-            <button
-              type="button"
-              onClick={() => setShowEnglish(!showEnglish)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showEnglish ? 'bg-[#2563eb]' : 'bg-[#e5e7eb]'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  showEnglish ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
+        {enabledLanguages.length > 0 && (
+          <div className="border-t pt-3 mt-4">
+            <p className="text-sm text-[#6b7280] flex flex-wrap gap-2 items-center">
+              <span>Активни преводи:</span>
+              {enabledLanguages.map(code => {
+                const langInfo = SUPPORTED_LANGUAGES.find(l => l.code === code);
+                return langInfo ? (
+                  <span key={code} className="flex items-center gap-1 bg-[#eff6ff] px-2 py-0.5 text-xs text-[#1e3a8a]">
+                    <FlagIcon countryCode={langInfo.countryCode} className="w-3 h-2" />
+                    {langInfo.name}
+                  </span>
+                ) : null;
+              })}
+              <span className="text-[#9ca3af]">— за промена на јазиците, одете во Основни поставки.</span>
+            </p>
           </div>
-          {showEnglish && (
-            <p className="text-sm text-[#4b5563] mb-4 flex items-center gap-1"><GB className="w-4 h-3" /> English fields will appear below each button title when enabled.</p>
-          )}
-        </div>
+        )}
 
         <div className="max-w-[200px] mx-auto mt-6">
           <SubmitButton>

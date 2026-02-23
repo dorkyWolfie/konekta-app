@@ -7,9 +7,7 @@ import { page } from '@/models/page';
 const FILE_SCHEMA = {
   key: { type: String, required: true },
   title: { maxLength: 100, required: true },
-  title_en: { maxLength: 100, required: false },
   description: { maxLength: 500, required: false },
-  description_en: { maxLength: 500, required: false },
   url: { maxLength: 1000, required: true },
   name: { maxLength: 255, required: true },
   type: { maxLength: 200, required: true },
@@ -48,9 +46,8 @@ function validateFilesData(files) {
     } else if (file.title && file.title.trim().length > FILE_SCHEMA.title.maxLength) {
       fileErrors.push(`File ${index + 1}: Title exceeds maximum length of ${FILE_SCHEMA.title.maxLength} characters`);
     }
-    // Require at least one of title (MK) or title_en (EN)
-    if ((!file.title || file.title.trim().length === 0) && (!file.title_en || file.title_en.trim().length === 0)) {
-      fileErrors.push(`File ${index + 1}: Either a MK or EN title is required`);
+    if (!file.title || file.title.trim().length === 0) {
+      fileErrors.push(`File ${index + 1}: Title is required`);
     }
 
     // Check required fileUrl
@@ -94,31 +91,29 @@ function validateFilesData(files) {
       fileErrors.push(`File ${index + 1}: Description exceeds maximum length of ${FILE_SCHEMA.description.maxLength} characters`);
     }
 
-    // Check optional English fields
-    if (file.title_en && typeof file.title_en !== 'string') {
-      fileErrors.push(`File ${index + 1}: English title must be a string`);
-    } else if (file.title_en && file.title_en.trim().length > FILE_SCHEMA.title_en.maxLength) {
-      fileErrors.push(`File ${index + 1}: English title exceeds maximum length of ${FILE_SCHEMA.title_en.maxLength} characters`);
-    }
-
-    if (file.description_en && typeof file.description_en !== 'string') {
-      fileErrors.push(`File ${index + 1}: English description must be a string`);
-    } else if (file.description_en && file.description_en.trim().length > FILE_SCHEMA.description_en.maxLength) {
-      fileErrors.push(`File ${index + 1}: English description exceeds maximum length of ${FILE_SCHEMA.description_en.maxLength} characters`);
-    }
-
     errors.push(...fileErrors);
+
+    // Sanitize translations object
+    let sanitizedTranslations = {};
+    if (file.translations && typeof file.translations === 'object') {
+      for (const [langCode, fields] of Object.entries(file.translations)) {
+        if (!fields || typeof fields !== 'object') continue;
+        sanitizedTranslations[langCode] = {
+          title: typeof fields.title === 'string' ? fields.title.replace(/<[^>]*>/g, '').slice(0, 100) : '',
+          description: typeof fields.description === 'string' ? fields.description.replace(/<[^>]*>/g, '').slice(0, 500) : '',
+        };
+      }
+    }
 
     return {
       key: file.key?.trim() || '',
       title: file.title?.trim() || '',
-      title_en: file.title_en?.trim() || '',
       description: file.description?.trim() || '',
-      description_en: file.description_en?.trim() || '',
       url: file.url?.trim() || '',
       name: file.name?.trim() || '',
       type: file.type?.trim().toLowerCase() || '',
-      size: Number(file.size) || 0
+      size: Number(file.size) || 0,
+      translations: sanitizedTranslations
     };
   });
 

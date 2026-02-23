@@ -5,8 +5,8 @@ import { toast } from 'react-hot-toast';
 import LoadingButton from "@/components/buttons/loadingButton";
 import { websiteTranslations } from "@/lib/i18n";
 
-export default function RegisterForm({ lang = 'mk' }) {
-  const t = websiteTranslations[lang] || websiteTranslations.mk;
+export default function RegisterForm({ lang = 'en' }) {
+  const t = websiteTranslations[lang] || websiteTranslations.en;
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 

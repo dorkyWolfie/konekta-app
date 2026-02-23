@@ -14,7 +14,6 @@ const BUTTON_SCHEMA = {
   key: { type: 'string', required: true },
   type: { type: 'string', required: true },
   title: { type: 'string', maxLength: 100, required: true },
-  title_en: { type: 'string', maxLength: 100, required: false },
   value: { type: 'string', maxLength: 500, required: true },
   icon: { type: 'string', maxLength: 500, required: false },
   isActive: { type: 'boolean', required: false, default: true },
@@ -56,9 +55,8 @@ function validateButtonsData(buttonsData) {
     } else if (button.title && button.title.trim().length > BUTTON_SCHEMA.title.maxLength) {
       buttonErrors.push(`Button ${index + 1}: Title exceeds maximum length`);
     }
-    // Require at least one of title (MK) or title_en (EN)
-    if ((!button.title || button.title.trim().length === 0) && (!button.title_en || button.title_en.trim().length === 0)) {
-      buttonErrors.push(`Button ${index + 1}: Either a MK or EN title is required`);
+    if (!button.title || button.title.trim().length === 0) {
+      buttonErrors.push(`Button ${index + 1}: Title is required`);
     }
 
     if (!button.value || typeof button.value !== 'string') {
@@ -127,24 +125,28 @@ function validateButtonsData(buttonsData) {
       buttonErrors.push(`Button ${index + 1}: isCustom must be a boolean`);
     }
 
-    // Validate optional title_en field
-    if (button.title_en && typeof button.title_en !== 'string') {
-      buttonErrors.push(`Button ${index + 1}: English title must be a string`);
-    } else if (button.title_en && button.title_en.trim().length > BUTTON_SCHEMA.title_en.maxLength) {
-      buttonErrors.push(`Button ${index + 1}: English title exceeds maximum length`);
-    }
-
     errors.push(...buttonErrors);
+
+    // Sanitize translations object
+    let sanitizedTranslations = {};
+    if (button.translations && typeof button.translations === 'object') {
+      for (const [langCode, fields] of Object.entries(button.translations)) {
+        if (!fields || typeof fields !== 'object') continue;
+        sanitizedTranslations[langCode] = {
+          title: typeof fields.title === 'string' ? fields.title.replace(/<[^>]*>/g, '').slice(0, 100) : '',
+        };
+      }
+    }
 
     return {
       key: button.key?.trim() || '',
       type: button.type?.trim() || '',
       title: button.title?.trim() || '',
-      title_en: button.title_en?.trim() || '',
       value: button.value?.trim() || '',
       icon: button.icon?.trim() || '',
       isActive: button.isActive !== undefined ? button.isActive : true,
-      isCustom: button.isCustom !== undefined ? button.isCustom : button.type?.startsWith('custom_') || false
+      isCustom: button.isCustom !== undefined ? button.isCustom : button.type?.startsWith('custom_') || false,
+      translations: sanitizedTranslations
     };
   });
 

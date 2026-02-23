@@ -4,8 +4,8 @@ import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { signIn } from "next-auth/react";
 import { websiteTranslations } from "@/lib/i18n";
 
-export default function LoginGoogle({ lang = 'mk' }) {
-    const t = websiteTranslations[lang] || websiteTranslations.mk;
+export default function LoginGoogle({ lang = 'en' }) {
+    const t = websiteTranslations[lang] || websiteTranslations.en;
     return (
         <button
         onClick={() => signIn('google', { callbackUrl: '/account' })}

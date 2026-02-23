@@ -7,9 +7,7 @@ import { page } from '@/models/page';
 const LINK_SCHEMA = {
   key: { type: 'string', required: true },
   title: { type: 'string', maxLength: 100, required: true },
-  title_en: { type: 'string', maxLength: 100, required: false },
   subtitle: { type: 'string', maxLength: 200, required: false },
-  subtitle_en: { type: 'string', maxLength: 200, required: false },
   url: { type: 'string', maxLength: 500, required: true },
   icon: { type: 'string', required: false }
 };
@@ -34,9 +32,8 @@ function validateLinksData(links) {
     } else if (link.title && link.title.trim().length > LINK_SCHEMA.title.maxLength) {
       linkErrors.push(`Link ${index + 1}: Title exceeds maximum length`);
     }
-    // Require at least one of title (MK) or title_en (EN)
-    if ((!link.title || link.title.trim().length === 0) && (!link.title_en || link.title_en.trim().length === 0)) {
-      linkErrors.push(`Link ${index + 1}: Either a MK or EN title is required`);
+    if ((!link.title || link.title.trim().length === 0)) {
+      linkErrors.push(`Link ${index + 1}: Title is required`);
     }
 
     if (!link.url || typeof link.url !== 'string') {
@@ -58,29 +55,27 @@ function validateLinksData(links) {
     //   linkErrors.push(`Link ${index + 1}: Icon name exceeds maximum length`);
     // }
 
-    // Check optional English fields
-    if (link.title_en && typeof link.title_en !== 'string') {
-      linkErrors.push(`Link ${index + 1}: English title must be a string`);
-    } else if (link.title_en && link.title_en.trim().length > LINK_SCHEMA.title_en.maxLength) {
-      linkErrors.push(`Link ${index + 1}: English title exceeds maximum length`);
-    }
-
-    if (link.subtitle_en && typeof link.subtitle_en !== 'string') {
-      linkErrors.push(`Link ${index + 1}: English subtitle must be a string`);
-    } else if (link.subtitle_en && link.subtitle_en.trim().length > LINK_SCHEMA.subtitle_en.maxLength) {
-      linkErrors.push(`Link ${index + 1}: English subtitle exceeds maximum length`);
-    }
-
     errors.push(...linkErrors);
+
+    // Sanitize translations object
+    let sanitizedTranslations = {};
+    if (link.translations && typeof link.translations === 'object') {
+      for (const [langCode, fields] of Object.entries(link.translations)) {
+        if (!fields || typeof fields !== 'object') continue;
+        sanitizedTranslations[langCode] = {
+          title: typeof fields.title === 'string' ? fields.title.replace(/<[^>]*>/g, '').slice(0, 100) : '',
+          subtitle: typeof fields.subtitle === 'string' ? fields.subtitle.replace(/<[^>]*>/g, '').slice(0, 200) : '',
+        };
+      }
+    }
 
     return {
       key: link.key?.trim() || '',
       title: link.title?.trim() || '',
-      title_en: link.title_en?.trim() || '',
       subtitle: link.subtitle?.trim() || '',
-      subtitle_en: link.subtitle_en?.trim() || '',
       url: link.url?.trim() || '',
-      icon: link.icon?.trim() || ''
+      icon: link.icon?.trim() || '',
+      translations: sanitizedTranslations
     };
   });
 
@@ -94,11 +89,6 @@ function isValidUrl(string) {
   } catch {
     return false;
   }
-}
-
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email) && email.length <= 254;
 }
 
 export async function savePageLinks(links, formData) {

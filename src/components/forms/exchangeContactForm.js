@@ -8,9 +8,9 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { saveExchangeContact } from "@/actions/contactActions";
 import { getLocalizedContent, contactMessages } from "@/lib/i18n";
 
-export default function ExchangeContactForm({page, user, lang = 'mk'}) {
+export default function ExchangeContactForm({page, user, lang = 'en'}) {
   const router = useRouter();
-  const messages = contactMessages[lang];
+  const messages = contactMessages[lang] || contactMessages['en'];
   const content = getLocalizedContent(page, lang);
 
   async function saveContact(formData) {

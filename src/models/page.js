@@ -25,6 +25,12 @@ const PageSchema = new Schema({
     files_en: {type: Object, default: []},
     // Translation settings
     showEnglishTranslation: {type: Boolean, default: false},
+    // Multi-language translations (for languages other than EN, which uses _en fields)
+    translations: {type: Object, default: {}},
+    // Tracks which language codes the user has added as translations
+    enabledLanguages: {type: [String], default: []},
+    // The language the base fields (displayName, bio, etc.) are written in. Defaults to 'mk'.
+    primaryLanguage: {type: String, default: 'mk'},
 }, {timestamps: true});
 
 export const page = models?.page || model("page", PageSchema);

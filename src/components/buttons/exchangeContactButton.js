@@ -7,9 +7,9 @@ import { faClose, faRepeat } from "@fortawesome/free-solid-svg-icons";
 import PopUp from "@/components/layout/popup";
 import ExchangeContactForm from "@/components/forms/exchangeContactForm";
 
-export default function ExchangeContactButton({page, user, lang = 'mk', ...props}) {
+export default function ExchangeContactButton({page, user, lang = 'en', ...props}) {
   const [showExchangeContactForm, setShowExchangeContactForm] = useState(false);
-  const messages = contactMessages[lang];
+  const messages = contactMessages[lang] || contactMessages['en'];
 
   return (
     <>

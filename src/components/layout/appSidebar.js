@@ -8,8 +8,8 @@ import { faFileLines, faAddressCard, faAddressBook } from "@fortawesome/free-reg
 import { usePathname } from "next/navigation";
 import { appTranslations } from "@/lib/i18n";
 
-export default function AppSidebar({ lang = 'mk' }) {
-  const t = appTranslations[lang] || appTranslations.mk;
+export default function AppSidebar({ lang = 'en' }) {
+  const t = appTranslations[lang] || appTranslations.en;
   const path = usePathname();
 
   return (

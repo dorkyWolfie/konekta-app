@@ -7,8 +7,8 @@ import { getLocalizedContent, shareContactMessages } from "@/lib/i18n";
 import QRCode from "react-qr-code";
 import Image from "next/image";
 
-export default function ShareContactForm({ page, user, lang = 'mk' }) {
-  const messages = shareContactMessages[lang];
+export default function ShareContactForm({ page, user, lang = 'en' }) {
+  const messages = shareContactMessages[lang] || shareContactMessages['en'];
   const content = getLocalizedContent(page, lang);
   const [copied, setCopied] = useState(false);
 

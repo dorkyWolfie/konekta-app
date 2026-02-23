@@ -44,7 +44,7 @@ export async function generateMetadata({ params }) {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="mk">
+    <html lang="en">
       <head>
         <meta name="robots" content="noindex, nofollow" />
         <meta charSet="UTF-8" />

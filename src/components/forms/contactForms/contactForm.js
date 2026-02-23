@@ -4,8 +4,8 @@ import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { websiteTranslations } from '@/lib/i18n';
 
-export default function ContactForm({ lang = 'mk' }) {
-  const t = websiteTranslations[lang] || websiteTranslations.mk;
+export default function ContactForm({ lang = 'en' }) {
+  const t = websiteTranslations[lang] || websiteTranslations.en;
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [formData, setFormData] = useState({ ime: '', prezime: '', email: '', telefon: '', poraka: '' });

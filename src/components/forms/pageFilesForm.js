@@ -5,7 +5,8 @@ import SectionBox from "../layout/sectionBox";
 import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faComment, faGripLines, faFile, faFilePdf, faImage, faPlus, faSave, faTrash, faDownload, faEye } from "@fortawesome/free-solid-svg-icons";
-import { GB } from 'country-flag-icons/react/3x2';
+import FlagIcon from "@/components/FlagIcon";
+import { SUPPORTED_LANGUAGES } from "@/lib/languages";
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { upload } from "@/libs/upload";
@@ -16,7 +17,14 @@ import { useRouter } from 'next/navigation';
 export default function PageFilesForm({page, user}) {
   const router = useRouter();
   const [files, setFiles] = useState(page.files || []);
-  const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
+
+  const primaryLang = page.primaryLanguage || 'mk';
+  // Non-primary languages only — primary content is in the main title/description inputs
+  const enabledLanguages = (
+    page.enabledLanguages?.length > 0
+      ? page.enabledLanguages
+      : page.showEnglishTranslation ? ['mk', 'en'] : ['mk']
+  ).filter(l => l !== primaryLang);
 
   async function save(formData) {
     try {
@@ -38,9 +46,7 @@ export default function PageFilesForm({page, user}) {
       return [...prev, {
         key: Date.now().toString(),
         title: '',
-        title_en: '',
         description: '',
-        description_en: '',
         url: '',
         name: '',
         type: '',
@@ -88,16 +94,16 @@ export default function PageFilesForm({page, user}) {
     });
   }
 
-  function handleFileChange(keyOfFileToChange, prop, ev) {
-    setFiles(prev => {
-      const newFiles = [...prev];
-      newFiles.forEach((fileItem) => {
-        if (fileItem.key === keyOfFileToChange) {
-          fileItem[prop] = ev.target.value;
-        }
-      });
-      return newFiles;
-    });
+  function handleFileChange(keyOfFileToChange, prop, ev, langCode = null) {
+    setFiles(prev => prev.map(fileItem => {
+      if (fileItem.key !== keyOfFileToChange) return fileItem;
+      if (!langCode) {
+        return { ...fileItem, [prop]: ev.target.value };
+      }
+      const translations = { ...(fileItem.translations || {}) };
+      translations[langCode] = { ...(translations[langCode] || {}), [prop]: ev.target.value };
+      return { ...fileItem, translations };
+    }));
   }
 
   // Function to delete file from S3
@@ -171,7 +177,6 @@ export default function PageFilesForm({page, user}) {
   return (
     <SectionBox>
       <form action={save}>
-        <input type="hidden" name="showEnglishTranslation" value={showEnglish} />
         <h2 className="text-2xl font-bold mb-4">Датотеки</h2>
         <button 
           onClick={addNewFile} 
@@ -268,15 +273,20 @@ export default function PageFilesForm({page, user}) {
                     type="text"
                     placeholder="Наслов на датотеката"
                   />
-                  {showEnglish && (
-                    <input
-                      value={f.title_en || ''}
-                      onChange={ev => handleFileChange(f.key, 'title_en', ev)}
-                      type="text"
-                      placeholder="English title"
-                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
-                    />
-                  )}
+                  {enabledLanguages.map(langCode => {
+                    const langInfo = SUPPORTED_LANGUAGES.find(l => l.code === langCode);
+                    if (!langInfo) return null;
+                    return (
+                      <input
+                        key={langCode}
+                        value={f.translations?.[langCode]?.title || ''}
+                        onChange={ev => handleFileChange(f.key, 'title', ev, langCode)}
+                        type="text"
+                        placeholder={`Наслов (${langInfo.name})`}
+                        className="mt-1 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-1 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                      />
+                    );
+                  })}
                   <label className="input-label">Опис</label>
                   <textarea
                     value={f.description}
@@ -284,15 +294,20 @@ export default function PageFilesForm({page, user}) {
                     placeholder="Опис на датотеката (не е задолжително)"
                     rows="3"
                   />
-                  {showEnglish && (
-                    <textarea
-                      value={f.description_en || ''}
-                      onChange={ev => handleFileChange(f.key, 'description_en', ev)}
-                      placeholder="English description (optional)"
-                      rows="3"
-                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
-                    />
-                  )}
+                  {enabledLanguages.map(langCode => {
+                    const langInfo = SUPPORTED_LANGUAGES.find(l => l.code === langCode);
+                    if (!langInfo) return null;
+                    return (
+                      <textarea
+                        key={langCode}
+                        value={f.translations?.[langCode]?.description || ''}
+                        onChange={ev => handleFileChange(f.key, 'description', ev, langCode)}
+                        placeholder={`Опис (${langInfo.name})`}
+                        rows="3"
+                        className="mt-1 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-1 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                      />
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -305,28 +320,23 @@ export default function PageFilesForm({page, user}) {
           </div>
         )}
 
-        {/* English Translation Toggle */}
-        <div className="border-t pt-4 mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <span className="font-medium text-[#374151] flex items-center gap-1"><GB className="w-4 h-3" /> Додади Англиски превод</span>
-            <button
-              type="button"
-              onClick={() => setShowEnglish(!showEnglish)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showEnglish ? 'bg-[#2563eb]' : 'bg-[#e5e7eb]'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  showEnglish ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
+        {enabledLanguages.length > 0 && (
+          <div className="border-t pt-3 mt-4">
+            <p className="text-sm text-[#6b7280] flex flex-wrap gap-2 items-center">
+              <span>Активни преводи:</span>
+              {enabledLanguages.map(code => {
+                const langInfo = SUPPORTED_LANGUAGES.find(l => l.code === code);
+                return langInfo ? (
+                  <span key={code} className="flex items-center gap-1 bg-[#eff6ff] px-2 py-0.5 text-xs text-[#1e3a8a]">
+                    <FlagIcon countryCode={langInfo.countryCode} className="w-3 h-2" />
+                    {langInfo.name}
+                  </span>
+                ) : null;
+              })}
+              <span className="text-[#9ca3af]">— за промена на јазиците, одете во Основни поставки.</span>
+            </p>
           </div>
-          {showEnglish && (
-            <p className="text-sm text-[#4b5563] mb-4 flex items-center gap-1"><GB className="w-4 h-3" /> English fields will appear below each file title and description when enabled.</p>
-          )}
-        </div>
+        )}
 
         <div className="max-w-[200px] mx-auto mt-4">
           <SubmitButton>

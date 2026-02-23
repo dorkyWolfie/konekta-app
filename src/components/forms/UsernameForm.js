@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { appTranslations } from "@/lib/i18n";
 
-export default function UsernameForm({ desiredUsername, lang = 'mk' }) {
-  const t = appTranslations[lang] || appTranslations.mk;
+export default function UsernameForm({ desiredUsername, lang = 'en' }) {
+  const t = appTranslations[lang] || appTranslations.en;
   const [taken, setTaken] = useState(false);
   const router = useRouter();
 

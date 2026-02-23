@@ -1,76 +1,70 @@
-// Check if a page has any English translation content
-export function hasEnglishContent(page) {
-  if (!page) return false;
-  return !!(
-    page.displayName_en ||
-    page.company_en ||
-    page.position_en ||
-    page.location_en ||
-    page.bio_en ||
-    (page.buttons && page.buttons.some(b => b.title_en)) ||
-    (page.links && page.links.some(l => l.title_en || l.subtitle_en)) ||
-    (page.files && page.files.some(f => f.title_en || f.description_en))
-  );
+function hasTranslationContent(trans) {
+  return trans && typeof trans === 'object' && Object.values(trans).some(v => v);
 }
 
-// Check if a page has any Macedonian content
-export function hasMacedonianContent(page) {
-  if (!page) return false;
-  return !!(
-    page.displayName ||
-    page.company ||
-    page.position ||
-    page.location ||
-    page.bio ||
-    (page.buttons && page.buttons.some(b => b.title)) ||
-    (page.links && page.links.some(l => l.title || l.subtitle)) ||
-    (page.files && page.files.some(f => f.title || f.description))
-  );
-}
-
-// Resolve the effective language: default to 'en' if English content exists, else 'mk'
+// Resolve the effective language to serve for a given request
 export function resolveLang(page, requestedLang) {
-  if (requestedLang === 'mk') return 'mk';
-  if (requestedLang === 'en') return 'en';
-  return hasEnglishContent(page) ? 'en' : 'mk';
-}
+  const primaryLang = page?.primaryLanguage || 'mk';
 
-// Get localized content based on language
-export function getLocalizedContent(page, lang = 'mk') {
-  if (lang === 'en') {
-    return {
-      displayName: page.displayName_en || page.displayName,
-      company: page.company_en || page.company,
-      position: page.position_en || page.position,
-      location: page.location_en || page.location,
-      bio: page.bio_en || page.bio,
-      links: page.links ? page.links.map(link => ({
-        ...link,
-        title: link.title_en || link.title,
-        subtitle: link.subtitle_en || link.subtitle
-      })) : [],
-      files: page.files ? page.files.map(file => ({
-        ...file,
-        title: file.title_en || file.title,
-        description: file.description_en || file.description
-      })) : [],
-      buttons: page.buttons ? page.buttons.map(button => ({
-        ...button,
-        title: button.title_en || button.title
-      })) : []
-    };
+  if (!requestedLang || requestedLang === primaryLang) return primaryLang;
+
+  // Check translations map (new format — after migration all content is here)
+  if (hasTranslationContent(page?.translations?.[requestedLang])) {
+    return requestedLang;
   }
 
-  // Default to Macedonian
+  // Legacy EN fallback: old pages that have _en fields but haven't been migrated yet
+  if (requestedLang === 'en' && page?.showEnglishTranslation) return 'en';
+
+  // Requested lang not available — serve primary
+  return primaryLang;
+}
+
+// Get localized content based on language.
+// Reads from translations[lang] first, falls back to legacy flat fields for unmigrated docs.
+export function getLocalizedContent(page, lang) {
+  const primaryLang = page?.primaryLanguage || 'mk';
+  const trans = page?.translations?.[lang] || {};
+  const primaryTrans = page?.translations?.[primaryLang] || {};
+
+  // For EN on a page not yet migrated: use legacy _en flat fields
+  const legacyEn = lang === 'en' && !hasTranslationContent(trans) && page?.showEnglishTranslation;
+
+  function pageField(field, enField) {
+    return trans[field]
+      || (legacyEn ? page?.[enField] : null)
+      || primaryTrans[field]
+      || page?.[field]
+      || '';
+  }
+
+  function itemField(item, field, enField) {
+    return item.translations?.[lang]?.[field]
+      || (legacyEn ? item[enField] : null)
+      || item[field]
+      || '';
+  }
+
   return {
-    displayName: page.displayName,
-    company: page.company,
-    position: page.position,
-    location: page.location,
-    bio: page.bio,
-    links: page.links || [],
-    files: page.files || [],
-    buttons: page.buttons || []
+    displayName: pageField('displayName', 'displayName_en'),
+    company: pageField('company', 'company_en'),
+    position: pageField('position', 'position_en'),
+    location: pageField('location', 'location_en'),
+    bio: pageField('bio', 'bio_en'),
+    links: (page?.links || []).map(link => ({
+      ...link,
+      title: itemField(link, 'title', 'title_en'),
+      subtitle: itemField(link, 'subtitle', 'subtitle_en'),
+    })),
+    files: (page?.files || []).map(file => ({
+      ...file,
+      title: itemField(file, 'title', 'title_en'),
+      description: itemField(file, 'description', 'description_en'),
+    })),
+    buttons: (page?.buttons || []).map(button => ({
+      ...button,
+      title: itemField(button, 'title', 'title_en'),
+    })),
   };
 }
 

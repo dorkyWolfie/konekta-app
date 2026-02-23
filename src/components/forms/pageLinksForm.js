@@ -4,23 +4,29 @@ import SectionBox from "../layout/sectionBox";
 import SubmitButton from "../buttons/submitButton";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowUp, faComment, faGripLines, faLink, faPlus, faSave, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { GB } from 'country-flag-icons/react/3x2';
+import FlagIcon from "@/components/FlagIcon";
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { upload } from "@/libs/upload";
 import { toast } from "react-hot-toast";
 import { savePageLinks } from "@/actions/linkActions";
 import { useRouter } from 'next/navigation';
+import { SUPPORTED_LANGUAGES } from "@/lib/languages";
 
-export default function PageLinksForm({page,user}) {
+export default function PageLinksForm({page, user}) {
   const router = useRouter();
   const [links, setLinks] = useState(page.links || []);
-  const [showEnglish, setShowEnglish] = useState(page.showEnglishTranslation || false);
+  const primaryLang = page.primaryLanguage || 'mk';
+  // Non-primary languages only — primary content is in the main title/subtitle inputs
+  const enabledLanguages = (
+    page.enabledLanguages?.length > 0
+      ? page.enabledLanguages
+      : page.showEnglishTranslation ? ['mk', 'en'] : ['mk']
+  ).filter(l => l !== primaryLang);
 
   async function save(formData) {
     try {
       const result = await savePageLinks(links, formData);
-
       if (result.success) {
         toast.success('Зачувано!');
         router.refresh();
@@ -32,18 +38,16 @@ export default function PageLinksForm({page,user}) {
     }
   }
 
-
   function addNewLink() {
     setLinks(prev => [
-      ...prev, 
+      ...prev,
       {
         key: Date.now().toString(),
         title: '',
-        title_en: '',
         subtitle: '',
-        subtitle_en: '',
         icon: '',
-        url: ''
+        url: '',
+        translations: {}
       }
     ]);
   }
@@ -52,42 +56,37 @@ export default function PageLinksForm({page,user}) {
     upload(ev, uploadedImageUrl => {
       setLinks(prevLinks => {
         const newLinks = [...prevLinks];
-        newLinks.forEach((link,index) => {
-          if (link.key === linkKeyForUpload) {
-            link.icon = uploadedImageUrl;
-          }
+        newLinks.forEach(link => {
+          if (link.key === linkKeyForUpload) link.icon = uploadedImageUrl;
         });
         return newLinks;
       });
     });
   }
 
-  function handleLinkChange(keyOfLinkToChange, prop, ev) {
-  setLinks(prev => {
-    const newLinks = [...prev];
-    newLinks.forEach((link) => {
-      if (link.key === keyOfLinkToChange) {
-        link[prop] = ev.target.value;
+  function handleLinkChange(keyOfLinkToChange, prop, value, langCode = null) {
+    setLinks(prev => prev.map(link => {
+      if (link.key !== keyOfLinkToChange) return link;
+      if (!langCode) {
+        return { ...link, [prop]: value };
       }
-    });
-    return newLinks;
-  });
-}
+      const translations = { ...(link.translations || {}) };
+      translations[langCode] = { ...(translations[langCode] || {}), [prop]: value };
+      return { ...link, translations };
+    }));
+  }
 
-function removeLink(linkKeyToRemove) {
-  setLinks(prevLinks =>
-    [...prevLinks].filter(l => l.key !== linkKeyToRemove)
-  );
-  toast.success('Линкот е избришан!');
-}
+  function removeLink(linkKeyToRemove) {
+    setLinks(prevLinks => [...prevLinks].filter(l => l.key !== linkKeyToRemove));
+    toast.success('Линкот е избришан!');
+  }
 
   return (
     <SectionBox>
       <form action={save}>
-        <input type="hidden" name="showEnglishTranslation" value={showEnglish} />
         <h2 className="text-2xl font-bold mb-4">Линкови</h2>
-        <button 
-          onClick={addNewLink} type="button" 
+        <button
+          onClick={addNewLink} type="button"
           className="text-[#3b82f6] text-lg flex gap-2 items-center cursor-pointer hover:text-[#1d4ed8]">
           <FontAwesomeIcon icon={faPlus} />
           <span>Внеси нов линк</span>
@@ -103,22 +102,22 @@ function removeLink(linkKeyToRemove) {
                   <div className="text-center flex flex-col items-center gap-2 text-sm">
                     <div className="aspect-square max-w-[50px]">
                       {l.icon && (
-                        <Image src={l.icon} alt={'icon'} className="w-full h-full object-cover"width={50} height={50} />
-                        )}
+                        <Image src={l.icon} alt={'icon'} className="w-full h-full object-cover" width={50} height={50} />
+                      )}
                       {!l.icon && (<FontAwesomeIcon icon={faLink} />)}
                     </div>
                     <div>
-                      <input 
-                        onChange={ev => handleUpload(ev,l.key)} id={'icon'+l.key} 
+                      <input
+                        onChange={ev => handleUpload(ev, l.key)} id={'icon' + l.key}
                         type="file" className="hidden" />
-                      <label 
-                        htmlFor={'icon'+l.key}
+                      <label
+                        htmlFor={'icon' + l.key}
                         className="py-2 px-6 flex items-center gap-1 border border-[#e5e7eb] hover:text-[#2563eb] cursor-pointer">
                         <FontAwesomeIcon icon={faCloudArrowUp} />
                         <span>Промени икона</span>
                       </label>
                     </div>
-                    <button 
+                    <button
                       type="button" onClick={() => removeLink(l.key)}
                       className="p-2 px-4 flex items-center gap-1 text-[#ef4444] cursor-pointer hover:text-[#b91c1c]">
                       <FontAwesomeIcon icon={faTrash} />
@@ -129,66 +128,82 @@ function removeLink(linkKeyToRemove) {
                 <div className="grow">
                   <label className="input-label">Наслов</label>
                   <input
-                    value={l.title} onChange={ev => handleLinkChange(l.key, 'title', ev)}
+                    value={l.title} onChange={ev => handleLinkChange(l.key, 'title', ev.target.value)}
                     type="text" placeholder="Наслов" />
-                  {showEnglish && (
-                    <input
-                      value={l.title_en || ''}
-                      onChange={ev => handleLinkChange(l.key, 'title_en', ev)}
-                      type="text" placeholder="English title"
-                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
-                    />
-                  )}
+
+                  {/* Translation title inputs — all non-primary languages use translations[langCode] */}
+                  {enabledLanguages.map(langCode => {
+                    const langInfo = SUPPORTED_LANGUAGES.find(sl => sl.code === langCode);
+                    if (!langInfo) return null;
+                    return (
+                      <input
+                        key={langCode}
+                        value={l.translations?.[langCode]?.title || ''}
+                        onChange={ev => handleLinkChange(l.key, 'title', ev.target.value, langCode)}
+                        type="text"
+                        placeholder={`Наслов (${langInfo.name})`}
+                        className="mt-1 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-1 hover:border-b hover:border-[#2563eb] bg-[#eff6ff] flex items-center gap-1"
+                        style={{ backgroundImage: 'none' }}
+                      />
+                    );
+                  })}
+
                   <label className="input-label">Поднаслов</label>
                   <input
-                    value={l.subtitle} onChange={ev => handleLinkChange(l.key, 'subtitle', ev)} type="text" placeholder="Поднаслов (не е задолжително)" />
-                  {showEnglish && (
-                    <input
-                      value={l.subtitle_en || ''}
-                      onChange={ev => handleLinkChange(l.key, 'subtitle_en', ev)}
-                      type="text" placeholder="English subtitle (optional)"
-                      className="mt-2 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-2 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
-                    />
-                  )}
+                    value={l.subtitle} onChange={ev => handleLinkChange(l.key, 'subtitle', ev.target.value)}
+                    type="text" placeholder="Поднаслов (не е задолжително)" />
+
+                  {/* Translation subtitle inputs — all non-primary languages use translations[langCode] */}
+                  {enabledLanguages.map(langCode => {
+                    const langInfo = SUPPORTED_LANGUAGES.find(sl => sl.code === langCode);
+                    if (!langInfo) return null;
+                    return (
+                      <input
+                        key={langCode}
+                        value={l.translations?.[langCode]?.subtitle || ''}
+                        onChange={ev => handleLinkChange(l.key, 'subtitle', ev.target.value, langCode)}
+                        type="text"
+                        placeholder={`Поднаслов (${langInfo.name})`}
+                        className="mt-1 border-b border-[#e5e7eb] w-full block py-2 px-2 mb-1 hover:border-b hover:border-[#2563eb] bg-[#eff6ff]"
+                      />
+                    );
+                  })}
+
                   <label className="input-label">Линк</label>
                   <input
-                    value={l.url} onChange={ev => handleLinkChange(l.key, 'url', ev)} type="text" placeholder="https://website.com" />
+                    value={l.url} onChange={ev => handleLinkChange(l.key, 'url', ev.target.value)}
+                    type="text" placeholder="https://website.com" />
                 </div>
               </div>
             ))}
           </ReactSortable>
         </div>
         {links.length === 0 && (
-                  <div className="text-center py-8 text-[#6b7280]">
-                    <FontAwesomeIcon icon={faComment} size="2x" className="mb-2" />
-                    <p>Немате додадено линкови. Кликнете на &quot;Внеси нов линк&quot; за да започнете.</p>
-                  </div>
-                )}
-
-        {/* English Translation Toggle */}
-        <div className="border-t pt-4 mt-6">
-          <div className="flex items-center justify-between mb-4">
-            <span className="font-medium text-[#374151] flex items-center gap-1"><GB className="w-4 h-3" /> Додади Англиски превод</span>
-            <button
-              type="button"
-              onClick={() => setShowEnglish(!showEnglish)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                showEnglish ? 'bg-[#2563eb]' : 'bg-[#e5e7eb]'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  showEnglish ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
+          <div className="text-center py-8 text-[#6b7280]">
+            <FontAwesomeIcon icon={faComment} size="2x" className="mb-2" />
+            <p>Немате додадено линкови. Кликнете на &quot;Внеси нов линк&quot; за да започнете.</p>
           </div>
-          {showEnglish && (
-            <p className="text-sm text-[#4b5563] mb-4 flex items-center gap-1"><GB className="w-4 h-3" /> English fields will appear below each link title and subtitle when enabled.</p>
-          )}
-        </div>
+        )}
 
-        <div className="max-w-[200px] mx-auto mt-4 ">
+        {enabledLanguages.length > 0 && (
+          <div className="border-t pt-3 mt-4">
+            <p className="text-sm text-[#6b7280] flex flex-wrap gap-2 items-center">
+              <span>Активни преводи:</span>
+              {enabledLanguages.map(code => {
+                const langInfo = SUPPORTED_LANGUAGES.find(l => l.code === code);
+                return langInfo ? (
+                  <span key={code} className="flex items-center gap-1 bg-[#eff6ff] px-2 py-0.5 text-xs text-[#1e3a8a]">
+                    <FlagIcon countryCode={langInfo.countryCode} className="w-3 h-2" />
+                    {langInfo.name}
+                  </span>
+                ) : null;
+              })}
+              <span className="text-[#9ca3af]">— за промена на јазиците, одете во Основни поставки.</span>
+            </p>
+          </div>
+        )}
+
+        <div className="max-w-[200px] mx-auto mt-4">
           <SubmitButton>
             <FontAwesomeIcon icon={faSave} />
             <span>Зачувај</span>
