@@ -1,6 +1,7 @@
 'use client';
 import SubmitButton from "@/components/buttons/submitButton";
-import { page } from "@/models/page";
+import { Turnstile } from "@marsidev/react-turnstile";
+import { useState } from "react";
 import { useRouter } from 'next/navigation';
 import { toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,12 +9,18 @@ import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { saveExchangeContact } from "@/actions/contactActions";
 import { getLocalizedContent, contactMessages } from "@/lib/i18n";
 
-export default function ExchangeContactForm({page, user, lang = 'mk'}) {
+export default function ExchangeContactForm({page, lang = 'mk'}) {
   const router = useRouter();
   const messages = contactMessages[lang];
   const content = getLocalizedContent(page, lang);
+  const [cfToken, setCfToken] = useState('');
 
   async function saveContact(formData) {
+    if (!cfToken) {
+      toast.error(messages.error);
+      return;
+    }
+    formData.set('cfToken', cfToken);
     const result = await saveExchangeContact(formData);
     if (result) {
       toast.success(messages.success);
@@ -31,7 +38,7 @@ export default function ExchangeContactForm({page, user, lang = 'mk'}) {
         <h1>{messages.h1}</h1>
         <p>{messages.description} {content?.displayName || content?.owner}</p>
       </div>
-      <div className="flex flex-col gap-2 items-start justify-center">
+      <div className="flex flex-col gap-2 items-center justify-center">
         <div className="flex flex-row gap-8 w-full">
           <label className="input-label w-full" htmlFor="contactName">
             <span>{messages.firstName}</span>
@@ -58,6 +65,10 @@ export default function ExchangeContactForm({page, user, lang = 'mk'}) {
           <span>{messages.phone}</span>
           <input type="text" id="contactPhone" name="contactPhone" placeholder={messages.phone} />
         </label>
+        <Turnstile
+          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+          onSuccess={setCfToken}
+        />
         <div className="max-w-[200px] mx-auto mt-4">
           <SubmitButton>
             <FontAwesomeIcon icon={faPaperPlane} />

@@ -14,7 +14,7 @@ function validateInput(key, value) {
     contactCompany: 100,
     contactPosition: 100,
     contactEmail: 100,
-    contactPhone: 12 // +389 12 345 678
+    contactPhone: 20 // e.g. +389 70 123 456
   };
 
   if (maxLengths[key] && value.length > maxLengths[key]) {
@@ -26,6 +26,21 @@ function validateInput(key, value) {
 
 export async function saveExchangeContact(formData) {
   try {
+    // Verify Turnstile token
+    const cfToken = formData.get('cfToken');
+    if (!cfToken) return false;
+
+    const verifyRes = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        secret: process.env.TURNSTILE_SECRET_KEY,
+        response: cfToken,
+      }),
+    });
+    const verifyData = await verifyRes.json();
+    if (!verifyData.success) return false;
+
     await mongoose.connect(process.env.MONGO_URI);
     const session = await getServerSession(authOptions);
 
@@ -83,7 +98,7 @@ export async function saveExchangeContact(formData) {
     }
 
     // Create new contact entry
-    const newContact = await contact.create(contactData);
+    await contact.create(contactData);
 
     // Send email notification to page owner
     await sendNewContactNotification({

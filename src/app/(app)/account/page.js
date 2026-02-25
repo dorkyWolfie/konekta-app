@@ -1,4 +1,3 @@
-'use server';
 import mongoose from "mongoose";
 import SectionBox from "@/components/layout/sectionBox";
 import UsernameForm from "@/components/forms/UsernameForm";

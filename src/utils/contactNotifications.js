@@ -133,7 +133,6 @@ export async function sendNewContactNotification({
       return false;
     }
 
-    console.log(`✓ Contact notification sent to ${ownerEmail}`, data);
     return true;
   } catch (error) {
     console.error('Error sending contact notification:', error);
